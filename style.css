@@ -1688,3 +1688,45 @@ body:not(.preview-open) main{margin-right:0 !important;}
   .guide, .guide-box, .guide-card, .guide-content, .manual, .manual-box{max-height:none !important; overflow:visible !important;}
   .sns, .social-links, .sns-links, .account-links, .link-area{overflow:visible !important;}
 }
+
+
+/* v59 — 모바일 밴드 링크 강제 표시 + 캐릭터 팝업 새 캐릭터마다 사진부터 시작 */
+.home-content.second .social .band-link{
+  display:flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  flex:0 0 92px !important;
+}
+.home-content.second .social .band-link img{
+  display:block !important;
+  visibility:visible !important;
+  width:30px !important;
+  height:30px !important;
+  object-fit:contain !important;
+}
+@media(max-width:650px){
+  .home-content.second .social{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    width:100% !important;
+    max-width:420px !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    justify-content:center !important;
+    gap:10px !important;
+  }
+  .home-content.second .social .band-link{
+    display:flex !important;
+    flex:0 0 92px !important;
+    width:92px !important;
+    height:72px !important;
+  }
+  .preview .preview-inner{
+    overflow-y:auto !important;
+    overscroll-behavior:contain !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+  .preview .preview-image{
+    scroll-margin-top:0 !important;
+  }
+}
