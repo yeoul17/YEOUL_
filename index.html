@@ -1,0 +1,116 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>여울의 보석함</title><link rel="stylesheet" href="style.css"></head><body>
+<aside class="side"><div class="logo"><div class="gem">◇</div><i>✦</i><i>✧</i><h1>여울의<br>보석함</h1><small>CHARACTER ARCHIVE</small></div><nav><button data-page="home" class="active">⌂　홈</button><button data-page="characters">♡　캐릭터</button><button data-page="pick">✧　여울's Pick</button></nav></aside>
+<main><section id="home" class="page active">
+<div class="home">
+  <div id="homeIntro" class="home-intro">
+    <div class="home-title">여울의 보석함</div>
+    <button id="chestButton" class="chest-button ornate-chest" aria-label="여울의 보석함 열기">
+      <span class="chest-spark s1">✦</span><span class="chest-spark s2">✧</span><span class="chest-halo"></span>
+      <span class="ornate-lid"><span class="ornate-frame"></span><span class="ornate-flower">✿</span><span class="ornate-vine left">❧</span><span class="ornate-vine right">❧</span></span>
+      <span class="ornate-base"><span class="gold-line line-top"></span><span class="gold-line line-bottom"></span><span class="ornate-flower front">✿</span><span class="ornate-vine front-left">❧</span><span class="ornate-vine front-right">❧</span></span>
+      <span class="ornate-feet left-foot"></span><span class="ornate-feet right-foot"></span><span class="ornate-lock">✦</span>
+    </button>
+    <p class="chest-hint">보석함을 열어보세요</p>
+  </div>
+
+  <div id="homeContent" class="home-content">
+    <h2 id="guideTitle">설명서</h2>
+    <div id="guideFirst" class="guide">
+      <p>여울의 보석함에 오신걸 환영합니다<br>
+      지금부터 저의 소중한 보석들을 보여드릴 예정이며 관람시 주의 및 요청사항에 대해 안내드리겠습니다</p>
+      <h3>관람시 주의 및 요청사항</h3>
+      <ol>
+        <li>소중한 보석들을 캡쳐 또는 저장하지 말아주세요</li>
+        <li>양식을 함부로 가져가서 사용하지 말아주세요</li>
+        <li>마음에 드는 보석에는 하트를 눌러주세요</li>
+      </ol>
+      <p>3가지를 기억해주시고 즐거운 관람 되시길 바랍니다</p>
+    </div>
+
+    <div id="guideSecond" class="guide second-guide">
+      <p><strong>성인 소비러 여울입니다</strong><br>저에 대해 설명을 드리려고합니다</p>
+      <h3><strong>˚ʚ Notice ɞ˚</strong></h3>
+      <p>୨୧ 커미션 무단캡쳐, 도용, 요소 빼가기는 금지입니다</p>
+      <p>୨୧ 단체샷, 투샷 좋아하니 편하게 물어봐주세요</p>
+      <p>୨୧ 대가성 솜넣은 거절합니다</p>
+      <p>୨୧ 낯가림이 심한편이나 먼저 다가와주시면 두 팔 벌려 환영합니다</p>
+      <p>୨୧ 연락은 카톡, 디스코드, 카페 채팅, X 디엠 상관없지만 카톡을 선호합니다</p>
+    </div>
+    <div id="social" class="social">
+      <a href="https://x.com/yejun_snow" target="_blank" rel="noopener">𝕏<small>본계</small></a>
+      <a href="https://x.com/y2jun_snow" target="_blank" rel="noopener">𝕏<small>비계</small></a>
+      <a href="https://x.com/X_Yeoul_X" target="_blank" rel="noopener">𝕏<small>백업계</small></a>
+      <a class="band-link" href="https://band.us/@yeoul" target="_blank" rel="noopener"><img src="https://developers.band.us/res/developers/images/template/down_logo2.png" alt="BAND"><small>네이버 밴드</small></a>
+    </div>
+  </div>
+</div>
+</section>
+<section id="characters" class="page"><header><div><div class="eyebrow">CHARACTER COLLECTION</div><h2>Characters</h2></div><span id="label"></span></header><div id="grid"></div><div class="pager"><button id="prev">←</button><span id="dots"></span><button id="next">→</button></div></section>
+<section id="pick" class="page"><header><div><div class="eyebrow">MY FAVORITES</div><h2>여울's Pick</h2></div></header><div class="empty">✦<h3>여울's Pick</h3><p>좋아하는 외관의 그림을 나중에 넣을 공간입니다.</p></div></section></main>
+<section id="preview" class="preview"><button id="previewClose" class="preview-close" aria-label="닫기">×</button><div class="preview-inner"><div class="preview-image" id="previewImage">IMAGE</div><div class="preview-copy"><div class="preview-label">CHARACTER</div><h2 id="previewName"></h2><p id="previewDesc"></p></div></div></section>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const intro = document.getElementById("homeIntro");
+  const content = document.getElementById("homeContent");
+  const chest = document.getElementById("chestButton");
+  const title = document.getElementById("guideTitle");
+  const first = document.getElementById("guideFirst");
+  const second = document.getElementById("guideSecond");
+  const social = document.getElementById("social");
+
+  let guideState = 0; // 0: 처음, 1: 설명서, 2: 여울 설명서
+  let guideTimer = null;
+
+  window.resetHome = function () {
+    guideState = 0;
+    if (guideTimer) { clearTimeout(guideTimer); guideTimer = null; }
+    intro.classList.remove("opened");
+    content.classList.remove("visible", "second");
+    title.textContent = "설명서";
+    first.style.display = "none";
+    second.style.display = "none";
+    social.style.display = "none";
+  };
+
+  window.resetHome();
+
+  chest.addEventListener("click", function () {
+    // 클릭할 때마다 보석이 반짝이는 효과
+    chest.classList.remove("sparkle-click");
+    void chest.offsetWidth;
+    chest.classList.add("sparkle-click");
+
+    if (guideState === 0) {
+      guideState = 1;
+      intro.classList.add("opened");
+      title.textContent = "설명서";
+      first.style.display = "block";
+      second.style.display = "none";
+      social.style.display = "none";
+      content.classList.remove("visible", "second");
+
+      // 보석함이 먼저 위로 올라간 뒤 설명서가 나타남
+      guideTimer = window.setTimeout(function () {
+        content.classList.add("visible");
+        guideTimer = null;
+      }, 780);
+    } else if (guideState === 1) {
+      guideState = 2;
+      title.textContent = "여울 설명서";
+      first.style.display = "none";
+      second.style.display = "flex";
+      social.style.display = "flex";
+      content.classList.add("second", "visible");
+    } else {
+      guideState = 1;
+      title.textContent = "설명서";
+      second.style.display = "none";
+      social.style.display = "none";
+      first.style.display = "block";
+      content.classList.remove("second");
+      content.classList.add("visible");
+    }
+  });
+});
+</script>
+<script src="script.js"></script></body></html>
