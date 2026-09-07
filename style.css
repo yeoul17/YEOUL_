@@ -1680,3 +1680,11 @@ body:not(.preview-open) main{margin-right:0 !important;}
   .home-content.second .social{margin-bottom:150px !important;}
   .home-content .social .band-link img{width:30px !important;height:30px !important;border-radius:8px !important;}
 }
+
+/* v58: PC 설명서 링크 영역이 잘리지 않도록 페이지/가이드 높이와 스크롤 정리 */
+@media (min-width: 651px){
+  html, body{min-height:100%; height:auto !important; overflow-y:auto !important; overflow-x:hidden !important;}
+  main, .main, .page, .content, .home-page, .guide-page{height:auto !important; min-height:100vh !important; overflow:visible !important;}
+  .guide, .guide-box, .guide-card, .guide-content, .manual, .manual-box{max-height:none !important; overflow:visible !important;}
+  .sns, .social-links, .sns-links, .account-links, .link-area{overflow:visible !important;}
+}

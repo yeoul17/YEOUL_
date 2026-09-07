@@ -2,9 +2,9 @@ const names=["최혜람","설예준","선아진","류재원","미오(배서우)"
 const profileTemplate="직업 :\n생일 :\n키 :\n별자리 :\n성격 :\n탄생화 :\n동물화 :\n특이사항 :";
 const profiles={
   "최혜람":"직업 : 동물원 수의사 및 사육사\n생일 : 11월 17일\n키 : 171cm\n별자리 : 전갈자리\n성격 : 세심함, 츤데레, 다정함\n탄생화 : 머위\n동물화 : 하늘색 판다\n특이사항 : 그믐달 동공",
-  "설예준":"직업 : 비행기 승무원\n생일 : 1월 30일\n키 : 186cm\n별자리 : 물병자리\n성격 : 무뚝뚝, 츤데레(연인, 가족한정), 눈물많음\n탄생화 : 매쉬 메리골드\n동물화 : 분홍색 여우\n관계성 : 선아진과 연인",
-  "선아진":"직업 : 포토그래퍼\n생일 : 7월 5일\n키 : 166cm\n별자리 : 게자리\n성격 : 온화함, 늘 웃는 얼굴, 눈물없음\n탄생화 : 라벤더\n동물화 : 밀색 토끼\n관계성 : 설예준과 연인",
-  "류재원":"직업 : 대학생\n생일 : 9월 8일\n키 : 188cm\n별자리 : 처녀자리\n성격 : 3무(무관심, 무뚝뚝, 무소유), 나른함\n탄생화 : 갓\n동물화 : 초록 나비\n특이사항 :"
+  "설예준":"직업 : 비행기 승무원\n생일 : 1월 30일\n키 : 186cm\n별자리 : 물병자리\n성격 : 무뚝뚝, 츤데레(연인, 가족한정), 눈물많음\n탄생화 : 매쉬 메리골드\n동물화 : 분홍색 여우\n관계성 : 선아진과 연인\n특이사항 : 별과 달모양 하이라이트",
+  "선아진":"직업 : 포토그래퍼\n생일 : 7월 5일\n키 : 166cm\n별자리 : 게자리\n성격 : 온화함, 늘 웃는 얼굴, 눈물없음\n탄생화 : 라벤더\n동물화 : 밀색 토끼\n관계성 : 설예준과 연인\n특이사항 : 하트 다이아모양 하이라이트",
+  "류재원":"직업 : 대학생\n생일 : 9월 8일\n키 : 188cm\n별자리 : 처녀자리\n성격 : 3무(무관심, 무뚝뚝, 무소유), 나른함\n탄생화 : 갓\n동물화 : 초록 나비\n특이사항 : 나비모양 동공"
 };
 const C=names.map((name,i)=>({
   id:i+1,
@@ -20,7 +20,7 @@ function toggleLike(){const i=likes.indexOf(current.id);if(i>=0)likes.splice(i,1
 function toggleCardLike(id){const i=likes.indexOf(id);if(i>=0)likes.splice(i,1);else if(likes.length<3)likes.push(id);else return alert('좋아요는 최대 3명까지 선택할 수 있어요.');saveLikes();updateCardLikes();if(current&&current.id===id)updateLikes()}
 function updateCardLikes(){document.querySelectorAll('.card-like').forEach(h=>{const id=Number(h.dataset.id);const on=likes.includes(id);h.classList.toggle('liked',on);h.textContent=on?'♥':'♡';h.setAttribute('aria-label',`${C.find(c=>c.id===id)?.name||''} 좋아요 ${on?'취소':'누르기'}`)})}
 let previewScrollY=0;
-function openPreview(id){previewScrollY=window.scrollY||document.documentElement.scrollTop||0;current=C.find(x=>x.id===id);document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));const selected=[...document.querySelectorAll('.card')].find(c=>c.querySelector('.num')?.textContent===String(current.id).padStart(2,'0'));if(selected)selected.classList.add('selected');document.querySelector('#previewName').textContent=current.name;document.querySelector('#previewDesc').innerHTML=current.description.split('\n').map(line=>{const parts=line.split(' : ');return parts.length>1?`<span class="info-line"><b>${parts.shift()} :</b> ${parts.join(' : ')}</span>`:`<span class="info-line intro-line">${line}</span>`}).join('');renderPreviewImage();document.querySelector('#preview').classList.add('open');document.body.classList.add('preview-open');document.documentElement.classList.add('preview-open');document.body.style.overflow='hidden'}
+function openPreview(id){previewScrollY=window.scrollY||document.documentElement.scrollTop||0;current=C.find(x=>x.id===id);document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));const selected=[...document.querySelectorAll('.card')].find(c=>c.querySelector('.num')?.textContent===String(current.id).padStart(2,'0'));if(selected)selected.classList.add('selected');const previewInner=document.querySelector('#preview .preview-inner');if(previewInner)previewInner.scrollTop=0;document.querySelector('#previewName').textContent=current.name;document.querySelector('#previewDesc').innerHTML=current.description.split('\n').map(line=>{const parts=line.split(' : ');return parts.length>1?`<span class="info-line"><b>${parts.shift()} :</b> ${parts.join(' : ')}</span>`:`<span class="info-line intro-line">${line}</span>`}).join('');renderPreviewImage();document.querySelector('#preview').classList.add('open');document.body.classList.add('preview-open');document.documentElement.classList.add('preview-open');document.body.style.overflow='hidden'}
 function closePreview(){document.querySelector('#preview').classList.remove('open');document.body.classList.remove('preview-open');document.documentElement.classList.remove('preview-open');document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));document.body.style.overflow='';requestAnimationFrame(()=>window.scrollTo(0,previewScrollY))}
 document.querySelector('#previewClose').onclick=closePreview;
 function goToCharacterPage(nextPage){
