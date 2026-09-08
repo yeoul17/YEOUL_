@@ -1891,31 +1891,7 @@ body:before{
 #profileAuthMessage.error{color:#b66c78;}
 @media(max-width:650px){.profile-upload-row{align-items:flex-start}.profile-box{max-height:calc(100vh - 20px);}}
 
-/* v69 account / login page */
-.account-page{max-width:1100px;margin:0 auto;}
-.account-wrap{max-width:620px;margin:20px auto 0;}
-.account-card{background:#fffafc;border:1px solid #eadce3;border-radius:28px;padding:34px 34px 30px;box-shadow:0 14px 35px rgba(70,55,70,.07);text-align:center;}
-.account-card h3{margin:0;color:#5f5660;font-size:27px;}
-.account-deco{font-size:18px;letter-spacing:5px;color:#c8a8ba;margin-bottom:9px;}
-.account-intro{font-size:13px;line-height:1.8;color:#8d8089;margin:10px 0 25px;}
-.account-card label{display:block;text-align:left;margin:0 0 7px 4px;font-size:13px;font-weight:700;color:#655c65;}
-.account-user-head{display:flex;align-items:center;justify-content:center;gap:13px;padding:18px;border:1px dashed #ddcbd5;border-radius:18px;background:#fff;}
-.account-user-head>div{text-align:left;display:flex;flex-direction:column;gap:3px;}
-.account-user-head strong{font-size:20px;color:#5f5660;}
-.account-user-head small{font-size:11px;color:#9b8e96;word-break:break-all;}
-.account-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px;}
-.account-edit{margin-top:18px;padding-top:18px;border-top:1px dashed #e2d3db;text-align:left;}
-.liked-section{margin-top:28px;padding-top:24px;border-top:1px solid #eee1e7;text-align:left;}
-.liked-heading{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
-.liked-heading>span{font-size:22px;color:#bd6f8d;}
-.liked-heading h3{font-size:17px;margin:0;color:#675d65;}
-.liked-heading small{font-size:11px;color:#a1939c;}
-.liked-characters{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.liked-character{position:relative;border:1px solid #eadde4;border-radius:16px;background:#fff;padding:8px;cursor:pointer;text-align:center;color:#665e67;}
-.liked-character:hover{transform:translateY(-2px);}
-.liked-character-image{height:120px;border-radius:11px;background:#fffafc;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#b9adb6;font-size:9px;letter-spacing:2px;}
-.liked-character-image img{width:100%;height:100%;object-fit:contain;}
-.liked-character-name{font-size:12px;font-weight:700;margin-top:8px;padding:0 16px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.liked-heart{position:absolute;right:9px;bottom:7px;color:#bd6f8d;font-size:13px;}
-.liked-empty{grid-column:1/-1;text-align:center;padding:30px 10px;color:#9b8e96;font-size:12px;line-height:1.8;border:1px dashed #dfd0d8;border-radius:17px;background:#fff;}
-@media(max-width:650px){.account-page{margin:0}.account-card{padding:28px 20px 24px;border-radius:22px}.liked-characters{grid-template-columns:repeat(2,1fr)}.liked-character-image{height:135px}.account-actions{grid-template-columns:1fr}.account-wrap{margin-top:5px}}
+/* v69: make the user's liked characters clearly visible on the account page */
+.liked-section-first{margin-top:22px;padding-top:22px;}
+.liked-help{margin:0 0 14px;color:#9b8e96;font-size:12px;line-height:1.7;}
+@media(max-width:650px){.liked-section-first{margin-top:20px;padding-top:20px}.liked-help{font-size:11px}}
