@@ -1838,3 +1838,15 @@ body:before{
   border-color:#efd9e2 !important;
 }
 #characters #grid .card h3{color:#665e67 !important;}
+
+/* v64 — 캐릭터 카드 색상을 프로필 설명 팝업과 동일한 색으로 통일 */
+#characters #grid .card,
+#characters #grid .card:nth-child(4n+1),
+#characters #grid .card:nth-child(4n+2),
+#characters #grid .card:nth-child(4n+3),
+#characters #grid .card:nth-child(4n){
+  background:#fffafc !important;
+}
+#characters #grid .card-image{
+  background:#fffafc !important;
+}
