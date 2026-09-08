@@ -1808,3 +1808,33 @@ body:not(.preview-open) main{margin-right:0 !important;}
     height:72px !important;
   }
 }
+
+/* v63 — 배경을 하늘색+연노랑 솜사탕 파스텔로 변경 / 캐릭터 카드 연분홍 통일 */
+body{
+  background:
+    radial-gradient(circle at 12% 16%, rgba(220,242,255,.72) 0 14%, rgba(220,242,255,0) 38%),
+    radial-gradient(circle at 86% 18%, rgba(255,247,205,.70) 0 13%, rgba(255,247,205,0) 37%),
+    radial-gradient(circle at 78% 82%, rgba(218,241,250,.62) 0 14%, rgba(218,241,250,0) 38%),
+    radial-gradient(circle at 20% 86%, rgba(255,246,211,.58) 0 13%, rgba(255,246,211,0) 36%),
+    linear-gradient(135deg,#f5fbff 0%,#eef9ff 30%,#fffbea 62%,#f5fbff 100%) !important;
+  background-attachment:fixed !important;
+}
+body:before{
+  background:
+    radial-gradient(circle at 25% 25%, rgba(255,255,255,.52), transparent 31%),
+    radial-gradient(circle at 76% 72%, rgba(255,255,255,.42), transparent 34%) !important;
+}
+/* 캐릭터 카드: 사진+이름 영역 전체를 같은 연분홍으로 통일 */
+#characters #grid .card,
+#characters #grid .card:nth-child(4n+1),
+#characters #grid .card:nth-child(4n+2),
+#characters #grid .card:nth-child(4n+3),
+#characters #grid .card:nth-child(4n){
+  background:#fff0f5 !important;
+  border-color:#f0d8e2 !important;
+}
+#characters #grid .card-image{
+  background:#fff6f9 !important;
+  border-color:#efd9e2 !important;
+}
+#characters #grid .card h3{color:#665e67 !important;}
