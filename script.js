@@ -31,7 +31,35 @@ async function loadProfileAndLikes(){
   profile=pData||null;
   const {data:lData}=await sb.from('character_likes').select('character_id').eq('user_id',user.id).order('created_at',{ascending:true});
   likes=(lData||[]).map(x=>Number(x.character_id));
-  refreshProfileUI();render();
+  refreshProfileUI();refreshAccountUI();render();
+}
+
+function renderLikedCharacters(){
+  const box=document.querySelector('#likedCharacters');
+  const count=document.querySelector('#likedCount');
+  if(!box||!count)return;
+  count.textContent=`${likes.length} / 3`;
+  if(!likes.length){box.innerHTML='<div class="liked-empty">아직 좋아요한 보석이 없어요.<br>마음에 드는 캐릭터의 하트를 눌러보세요.</div>';return;}
+  box.innerHTML=likes.map(id=>{
+    const c=C.find(x=>x.id===id); if(!c)return '';
+    const image=c.images&&c.images.length?`<img src="${c.images[0]}" alt="${c.name}">`:'<span>IMAGE</span>';
+    return `<button class="liked-character" data-id="${c.id}"><div class="liked-character-image">${image}</div><div class="liked-character-name">${c.name}</div><span class="liked-heart">♥</span></button>`;
+  }).join('');
+  box.querySelectorAll('.liked-character').forEach(btn=>btn.onclick=()=>{show('characters');openPreview(Number(btn.dataset.id));});
+}
+
+function refreshAccountUI(){
+  const out=document.querySelector('#accountLoggedOut'), create=document.querySelector('#accountCreate'), logged=document.querySelector('#accountLoggedIn'), title=document.querySelector('#accountTitle'), nav=document.querySelector('#profileNav');
+  if(!out||!create||!logged)return;
+  if(!SUPABASE_READY){out.hidden=false;create.hidden=true;logged.hidden=true;title.textContent='로그인';nav.textContent='♡　로그인';return;}
+  if(user&&profile){out.hidden=true;create.hidden=true;logged.hidden=false;title.textContent='나의 프로필';nav.textContent='♡ '+profile.nickname;
+    document.querySelector('#accountNameText').textContent=profile.nickname;
+    document.querySelector('#accountEmailText').textContent=user.email||'';
+    const img=document.querySelector('#accountAvatarImg'), fb=document.querySelector('#accountAvatarFallback');
+    if(profile.avatar_url){img.src=profile.avatar_url;img.classList.add('show');fb.classList.add('hide')}else{img.removeAttribute('src');img.classList.remove('show');fb.classList.remove('hide')}
+    renderLikedCharacters();
+  }else if(user&&!profile){out.hidden=true;create.hidden=false;logged.hidden=true;title.textContent='프로필 만들기';nav.textContent='♡　프로필';}
+  else{out.hidden=false;create.hidden=true;logged.hidden=true;title.textContent='로그인';nav.textContent='♡　로그인';}
 }
 
 function refreshProfileUI(){
@@ -70,7 +98,51 @@ document.querySelector('#prev').onclick=()=>goToCharacterPage(page-1);document.q
 function show(id){closePreview();document.body.classList.remove('preview-open');document.documentElement.classList.remove('preview-open');document.body.style.overflow='';if(typeof window.resetHome==='function')window.resetHome();document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const target=document.querySelector('#'+id);if(target)target.classList.add('active');document.querySelectorAll('[data-page]').forEach(n=>n.classList.toggle('active',n.dataset.page===id));requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));}
 
 const profileModal=document.querySelector('#profileModal');
-document.querySelector('#profileNav').onclick=openProfile;document.querySelector('#profileClose').onclick=closeProfile;document.querySelector('.profile-backdrop').onclick=closeProfile;
+document.querySelector('#profileNav').onclick=()=>show('account');document.querySelector('#profileClose').onclick=closeProfile;document.querySelector('.profile-backdrop').onclick=closeProfile;
+
+document.querySelector('#accountSendEmail').onclick=async()=>{
+  if(!sb)return alert('먼저 Supabase 설정을 완료해주세요.');
+  const email=document.querySelector('#accountEmail').value.trim();
+  if(!email||!email.includes('@'))return alert('올바른 이메일 주소를 입력해주세요.');
+  const btn=document.querySelector('#accountSendEmail');btn.disabled=true;btn.textContent='인증 메일 보내는 중...';
+  const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:window.location.origin+window.location.pathname,shouldCreateUser:true}});
+  btn.disabled=false;btn.textContent='이메일 인증 링크 받기';
+  const msg=document.querySelector('#accountAuthMessage');msg.classList.remove('error');
+  if(error){msg.textContent='메일을 보내지 못했어요: '+error.message;msg.classList.add('error');return;}
+  msg.textContent='인증 링크를 보냈어요! 이메일을 확인하고 링크를 눌러주세요.';msg.classList.add('success');
+};
+
+document.querySelector('#accountCreateBtn').onclick=async()=>{
+  if(!sb||!user)return alert('먼저 이메일 인증을 완료해주세요.');
+  const name=document.querySelector('#accountName').value.trim();if(!name)return alert('닉네임을 입력해주세요.');
+  const file=document.querySelector('#accountAvatar').files[0];
+  if(file&&file.size>5*1024*1024)return alert('프로필 사진은 5MB 이하로 올려주세요.');
+  const btn=document.querySelector('#accountCreateBtn');btn.disabled=true;btn.textContent='프로필 저장 중...';
+  let avatarUrl=profile?.avatar_url||null;
+  if(file){const ext=(file.name.split('.').pop()||'jpg').toLowerCase();const path=`${user.id}/avatar.${ext}`;const {error:upErr}=await sb.storage.from('avatars').upload(path,file,{upsert:true,contentType:file.type});if(upErr){btn.disabled=false;btn.textContent='프로필 만들기';return alert('프로필 사진 업로드에 실패했어요: '+upErr.message)}avatarUrl=sb.storage.from('avatars').getPublicUrl(path).data.publicUrl+'?v='+Date.now();}
+  const {error}=await sb.from('profiles').upsert({id:user.id,nickname:name,avatar_url:avatarUrl,updated_at:new Date().toISOString()});
+  btn.disabled=false;btn.textContent='프로필 만들기';if(error)return alert('프로필 저장에 실패했어요: '+error.message);
+  await loadProfileAndLikes();refreshAccountUI();alert('프로필이 만들어졌어요!');
+};
+
+document.querySelector('#accountAvatar').onchange=(e)=>{const file=e.target.files[0];const box=document.querySelector('#accountAvatarPreview');if(!file){box.innerHTML='♡';return}if(file.size>5*1024*1024){e.target.value='';box.innerHTML='♡';return alert('프로필 사진은 5MB 이하로 올려주세요.')}const reader=new FileReader();reader.onload=()=>{box.innerHTML=`<img src="${reader.result}" alt="미리보기">`};reader.readAsDataURL(file)};
+
+document.querySelector('#accountEditBtn').onclick=()=>{if(!profile)return;const area=document.querySelector('#accountEditArea');area.hidden=!area.hidden;document.querySelector('#accountEditName').value=profile.nickname;document.querySelector('#accountEditAvatarPreview').innerHTML=profile.avatar_url?`<img src="${profile.avatar_url}" alt="현재 프로필 사진">`:'♡';};
+
+document.querySelector('#accountEditAvatar').onchange=(e)=>{const file=e.target.files[0];const box=document.querySelector('#accountEditAvatarPreview');if(!file){box.innerHTML=profile?.avatar_url?`<img src="${profile.avatar_url}" alt="현재 프로필 사진">`:'♡';return}if(file.size>5*1024*1024){e.target.value='';return alert('프로필 사진은 5MB 이하로 올려주세요.')}const reader=new FileReader();reader.onload=()=>{box.innerHTML=`<img src="${reader.result}" alt="미리보기">`};reader.readAsDataURL(file)};
+
+document.querySelector('#accountSaveEdit').onclick=async()=>{
+  if(!sb||!user||!profile)return;
+  const name=document.querySelector('#accountEditName').value.trim();if(!name)return alert('닉네임을 입력해주세요.');
+  const file=document.querySelector('#accountEditAvatar').files[0];if(file&&file.size>5*1024*1024)return alert('프로필 사진은 5MB 이하로 올려주세요.');
+  const btn=document.querySelector('#accountSaveEdit');btn.disabled=true;btn.textContent='저장 중...';let avatarUrl=profile.avatar_url||null;
+  if(file){const ext=(file.name.split('.').pop()||'jpg').toLowerCase();const path=`${user.id}/avatar.${ext}`;const {error}=await sb.storage.from('avatars').upload(path,file,{upsert:true,contentType:file.type});if(error){btn.disabled=false;btn.textContent='프로필 저장';return alert('프로필 사진 업로드에 실패했어요: '+error.message)}avatarUrl=sb.storage.from('avatars').getPublicUrl(path).data.publicUrl+'?v='+Date.now();}
+  const {error}=await sb.from('profiles').upsert({id:user.id,nickname:name,avatar_url:avatarUrl,updated_at:new Date().toISOString()});btn.disabled=false;btn.textContent='프로필 저장';if(error)return alert('프로필 저장에 실패했어요: '+error.message);await loadProfileAndLikes();document.querySelector('#accountEditArea').hidden=true;refreshAccountUI();
+};
+
+document.querySelector('#accountLogoutBtn').onclick=async()=>{if(!sb)return;if(!confirm('로그아웃할까요?'))return;await sb.auth.signOut();user=null;profile=null;likes=[];refreshProfileUI();refreshAccountUI();render();show('account');};
+
+document.querySelector('#accountEmail').addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#accountSendEmail').click()});
 
 document.querySelector('#profileSendEmail').onclick=async()=>{
   if(!sb)return alert('먼저 Supabase 설정을 완료해주세요.');
@@ -105,5 +177,5 @@ document.querySelector('#profileEdit').onclick=()=>{if(!profile)return;document.
 
 document.querySelector('#profileLogout').onclick=async()=>{if(!sb)return;if(!confirm('로그아웃할까요?'))return;await sb.auth.signOut();user=null;profile=null;likes=[];refreshProfileUI();render();closeProfile()};
 
-if(sb){sb.auth.onAuthStateChange((event,session)=>{user=session?.user||null;setTimeout(async()=>{await loadProfileAndLikes();if(event==='SIGNED_IN'){closeProfile();setTimeout(()=>{if(!profile)openProfile()},250)}},0)});sb.auth.getSession().then(async({data})=>{user=data.session?.user||null;await loadProfileAndLikes();});}
-render();refreshProfileUI();
+if(sb){sb.auth.onAuthStateChange((event,session)=>{user=session?.user||null;setTimeout(async()=>{await loadProfileAndLikes();refreshAccountUI();if(event==='SIGNED_IN'){closeProfile();setTimeout(()=>show('account'),150)}},0)});sb.auth.getSession().then(async({data})=>{user=data.session?.user||null;await loadProfileAndLikes();refreshAccountUI();});}
+render();refreshProfileUI();refreshAccountUI();
