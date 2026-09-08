@@ -153,24 +153,43 @@ document.querySelector('#profileEmail').addEventListener('keydown',e=>{if(e.key=
 document.querySelector('#profileEdit').onclick=()=>{if(!profile)return;document.querySelector('#profileCreateArea').hidden=false;document.querySelector('#profileUserArea').hidden=true;document.querySelector('#profileName').value=profile.nickname;document.querySelector('#profileStatus').textContent='닉네임이나 프로필 사진을 변경할 수 있어요.';const box=document.querySelector('#profileAvatarPreview');box.innerHTML=profile.avatar_url?`<img src="${profile.avatar_url}" alt="현재 프로필 사진">`:'♡';};
 
 function authErrorMessage(error, mode){
-  const raw=String(error?.message||error?.error_description||'');
-  const code=String(error?.code||'');
-  const all=(raw+' '+code).toLowerCase();
-  if(all.includes('invalid login credentials')) return '이메일 또는 비밀번호가 올바르지 않아요.\n\n이미 이메일 간편인증으로 가입한 계정이라면 비밀번호가 설정되어 있지 않을 수 있어요. 그 경우에는 이메일 간편 로그인으로 로그인해주세요.';
-  if(all.includes('email not confirmed')) return '이메일 인증이 아직 완료되지 않았어요.\n\n받은 인증 메일의 링크를 먼저 눌러주세요.';
-  if(all.includes('user already registered')||all.includes('already registered')) return '이미 가입된 이메일이에요.\n\n로그인 버튼을 이용하거나 이메일 간편 로그인을 이용해주세요.';
-  if(all.includes('signup') && (all.includes('disabled')||all.includes('not allowed'))) return 'Supabase에서 신규 회원가입이 허용되지 않은 상태예요.\n\nSupabase > Authentication > Sign In > Allow new users to sign up을 켜주세요.';
-  if(all.includes('signups not allowed')) return '현재 Supabase에서 신규 회원가입이 허용되지 않아 계정을 만들 수 없어요.\n\nSupabase > Authentication > Sign In > Allow new users to sign up을 켜주세요.';
-  if(all.includes('password') && all.includes('6')) return '비밀번호는 6자 이상이어야 해요.';
+  const raw=String(error?.message||error?.error_description||'').trim();
+  const code=String(error?.code||'').trim();
+  const status=String(error?.status||'');
+  const all=(raw+' '+code+' '+status).toLowerCase();
+  if(all.includes('invalid login credentials')) return '이메일 또는 비밀번호가 올바르지 않아요.\n\n이메일 주소를 다시 확인하고, 비밀번호를 정확히 입력해주세요.\n\n이전에 이메일 간편인증으로만 가입했다면 비밀번호 로그인이 안 될 수 있어요. 그 경우에는 이메일 간편 로그인을 이용해주세요.';
+  if(all.includes('email not confirmed')) return '이메일 인증이 아직 완료되지 않았어요.\n\n가입할 때 받은 인증 메일의 링크를 먼저 눌러주세요.';
+  if(all.includes('user already registered')||all.includes('already registered')) return '이미 가입된 이메일이에요.\n\n회원가입이 아니라 로그인 버튼을 이용해주세요. 비밀번호를 모른다면 이메일 간편 로그인을 이용할 수 있어요.';
+  if(all.includes('signups not allowed')||all.includes('signup') && (all.includes('disabled')||all.includes('not allowed'))) return '현재 Supabase에서 신규 회원가입이 허용되지 않았어요.\n\nSupabase > Authentication > Sign In > Allow new users to sign up을 켜주세요.';
+  if(all.includes('password') && (all.includes('at least')||all.includes('6')||all.includes('short'))) return '비밀번호는 6자 이상이어야 해요.';
   if(all.includes('rate limit')||all.includes('rate_limit')) return '이메일 발송 제한에 걸렸어요.\n\n잠시 기다린 뒤 다시 시도해주세요. 이미 받은 인증 메일이 있다면 기존 메일의 링크를 사용해주세요.';
-  if(all.includes('fetch')||all.includes('network')) return 'Supabase 서버에 연결하지 못했어요.\n\n인터넷 연결과 Supabase 설정을 확인해주세요.';
-  return (mode==='login'?'로그인에 실패했어요.':mode==='signup'?'회원가입에 실패했어요.':'이메일 간편 로그인에 실패했어요.')+'\n\n'+(raw||'알 수 없는 오류가 발생했어요.');
+  if(all.includes('fetch')||all.includes('network')||all.includes('failed to fetch')) return 'Supabase 서버에 연결하지 못했어요.\n\n인터넷 연결과 Supabase 설정을 확인해주세요.';
+  return (mode==='login'?'로그인에 실패했어요.':mode==='signup'?'회원가입에 실패했어요.':'이메일 간편 로그인에 실패했어요.')+'\n\n'+(raw||'알 수 없는 오류가 발생했어요.')+(code?`\n\n오류 코드: ${code}`:'');
 }
-
 function popup(title,message){alert(title+'\n\n'+message);}
 function getLoginValues(){return {email:document.querySelector('#loginEmail').value.trim(),password:document.querySelector('#loginPassword').value};}
 function validateEmail(email){return !!email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);}
-
+let loginMode='login';
+function setLoginMode(mode){
+  loginMode=mode==='signup'?'signup':'login';
+  const wrap=document.querySelector('#signupPasswordConfirmWrap');
+  const confirm=document.querySelector('#signupPasswordConfirm');
+  const loginBtn=document.querySelector('#loginPasswordBtn');
+  const signupBtn=document.querySelector('#signupPasswordBtn');
+  const title=document.querySelector('#loginTitle');
+  const eyebrow=document.querySelector('#loginEyebrow');
+  const boxTitle=document.querySelector('#loginBoxTitle');
+  const intro=document.querySelector('#loginIntro');
+  if(wrap)wrap.hidden=loginMode!=='signup';
+  if(confirm && loginMode!=='signup')confirm.value='';
+  if(loginBtn)loginBtn.textContent=loginMode==='signup'?'회원가입으로 돌아가기':'로그인';
+  if(signupBtn){signupBtn.textContent=loginMode==='signup'?'가입하기':'회원가입';}
+  if(title)title.textContent=loginMode==='signup'?'회원가입':'로그인';
+  if(eyebrow)eyebrow.textContent=loginMode==='signup'?'MEMBER SIGN UP':'MEMBER LOGIN';
+  if(boxTitle)boxTitle.textContent=loginMode==='signup'?'여울의 보석함 회원가입':'여울의 보석함 로그인';
+  if(intro)intro.textContent=loginMode==='signup'?'이메일과 비밀번호를 입력해 계정을 만들어주세요.':'이메일과 비밀번호로 로그인해주세요.';
+  const otp=document.querySelector('#loginOtpBtn'); if(otp)otp.style.display='';
+}
 async function finishAuth(session,message){
   user=session?.user||null;
   await loadProfileAndLikes();
@@ -180,33 +199,38 @@ async function finishAuth(session,message){
 }
 
 document.querySelector('#loginPasswordBtn').onclick=async()=>{
+  if(loginMode==='signup'){setLoginMode('login');return;}
   if(!sb)return popup('로그인할 수 없어요',SUPABASE_INIT_ERROR||'Supabase 설정이 준비되지 않았어요. supabase-config.js의 URL과 Publishable Key를 확인해주세요.');
   const {email,password}=getLoginValues();
-  if(!validateEmail(email))return popup('입력 확인','올바른 이메일 주소를 입력해주세요.');
+  if(!validateEmail(email))return popup('입력 확인','올바른 이메일 주소를 입력해주세요.\n\n예: example@email.com');
   if(!password)return popup('입력 확인','비밀번호를 입력해주세요.');
   const btn=document.querySelector('#loginPasswordBtn');btn.disabled=true;btn.textContent='로그인 중...';
-  try{
-    const {data,error}=await sb.auth.signInWithPassword({email,password});
-    if(error){popup('로그인 실패',authErrorMessage(error,'login'));return;}
-    await finishAuth(data?.session||null,'로그인이 정상적으로 완료되었습니다.');
-  }catch(e){popup('로그인 오류',authErrorMessage(e,'login'));}
+  try{const {data,error}=await sb.auth.signInWithPassword({email,password});if(error){popup('로그인 실패',authErrorMessage(error,'login'));return;}await finishAuth(data?.session||null,'로그인이 정상적으로 완료되었습니다.');}
+  catch(e){popup('로그인 오류',authErrorMessage(e,'login'));}
   finally{btn.disabled=false;btn.textContent='로그인';}
 };
 
 document.querySelector('#signupPasswordBtn').onclick=async()=>{
+  if(loginMode!=='signup'){setLoginMode('signup');document.querySelector('#loginEmail')?.focus();return;}
   if(!sb)return popup('회원가입할 수 없어요',SUPABASE_INIT_ERROR||'Supabase 설정이 준비되지 않았어요. supabase-config.js의 URL과 Publishable Key를 확인해주세요.');
   const {email,password}=getLoginValues();
-  if(!validateEmail(email))return popup('입력 확인','올바른 이메일 주소를 입력해주세요.');
-  if(password.length<6)return popup('입력 확인','비밀번호는 6자 이상으로 입력해주세요.');
+  const confirmPassword=document.querySelector('#signupPasswordConfirm').value;
+  if(!validateEmail(email))return popup('입력 확인','올바른 이메일 주소를 입력해주세요.\n\n예: example@email.com');
+  if(password.length<6)return popup('입력 확인','비밀번호는 6자 이상으로 입력해주세요.\n\n현재 입력한 비밀번호가 너무 짧아요.');
+  if(password!==confirmPassword)return popup('입력 확인','비밀번호가 서로 일치하지 않아요.\n\n비밀번호와 비밀번호 확인을 똑같이 입력해주세요.');
   const btn=document.querySelector('#signupPasswordBtn');btn.disabled=true;btn.textContent='가입 중...';
   try{
     const {data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin+window.location.pathname}});
     if(error){popup('회원가입 실패',authErrorMessage(error,'signup'));return;}
     if(data?.session){await finishAuth(data.session,'회원가입과 로그인이 완료되었습니다.');}
-    else{popup('회원가입 완료','가입 요청이 완료되었습니다.\n\n이메일 인증이 켜져 있어서 인증 메일을 확인해야 로그인이 가능합니다.\n인증 링크를 누른 뒤 이 사이트로 돌아오면 로그인 상태가 됩니다.');}
+    else{popup('회원가입 완료','계정이 만들어졌어요.\n\n현재 Supabase에서 이메일 인증이 켜져 있어요. 받은 인증 메일의 링크를 눌러 인증을 완료해주세요.\n\n인증이 끝난 뒤 로그인 페이지에서 같은 이메일과 비밀번호로 로그인하면 됩니다.');setLoginMode('login');}
   }catch(e){popup('회원가입 오류',authErrorMessage(e,'signup'));}
-  finally{btn.disabled=false;btn.textContent='회원가입';}
+  finally{btn.disabled=false;btn.textContent=loginMode==='signup'?'가입하기':'회원가입';}
 };
+
+document.querySelector('#loginEmail').addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#loginPassword').focus()});
+document.querySelector('#loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#loginPasswordBtn').click()});
+document.querySelector('#signupPasswordConfirm').addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#signupPasswordBtn').click()});
 
 const OTP_COOLDOWN_MS=60000;
 function otpCooldownRemaining(){const t=Number(localStorage.getItem('yeoul_otp_last_sent')||0);return Math.max(0,OTP_COOLDOWN_MS-(Date.now()-t));}
@@ -246,7 +270,7 @@ if(sb){
     setTimeout(async()=>{
       try{await loadProfileAndLikes();}catch(e){console.error('profile load error',e);refreshProfileUI();}
       if(event==='SIGNED_IN'){closeProfile();refreshProfileUI();show('login');}
-      if(event==='SIGNED_OUT'){profile=null;likes=[];refreshProfileUI();render();show('login');}
+      if(event==='SIGNED_OUT'){profile=null;likes=[];setLoginMode('login');refreshProfileUI();render();show('login');}
     },0);
   });
   sb.auth.getSession().then(async({data,error})=>{
@@ -255,4 +279,4 @@ if(sb){
     try{await loadProfileAndLikes();}catch(e){console.error('initial profile load error',e);refreshProfileUI();}
   });
 }
-render();refreshProfileUI();
+render();refreshProfileUI();setLoginMode(user?'login':loginMode);
