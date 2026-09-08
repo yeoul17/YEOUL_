@@ -29,7 +29,7 @@ function updateCardLikes(){document.querySelectorAll('.card-like').forEach(h=>{c
 
 async function loadProfileAndLikes(){
   if(!sb||!user){profile=null;likes=[];refreshProfileUI();render();return;}
-  const {data:pData}=await sb.from('profiles').select('id,nickname,avatar_url').eq('id',user.id).maybeSingle();
+  const {data:pData}=await sb.from('profiles').select('id,nickname,avatar_url,is_master').eq('id',user.id).maybeSingle();
   profile=pData||null;
   const {data:lData}=await sb.from('character_likes').select('character_id').eq('user_id',user.id).order('created_at',{ascending:true});
   likes=(lData||[]).map(x=>Number(x.character_id));
@@ -307,3 +307,62 @@ if(sb){
   });
 }
 render();refreshProfileUI();if(!user)setLoginMode(loginMode);
+
+/* v78 master dashboard */
+async function loadMasterLikes(){
+  const grid=document.querySelector('#masterLikesGrid');
+  const status=document.querySelector('#masterStatus');
+  const totalEl=document.querySelector('#masterLikeTotal');
+  const empty=document.querySelector('#masterEmpty');
+  if(!grid||!status||!totalEl||!empty)return;
+  if(!user||!profile?.is_master){grid.innerHTML='';totalEl.textContent='';empty.hidden=true;status.textContent='마스터 계정만 볼 수 있어요.';return;}
+  status.textContent='좋아요 기록을 불러오는 중...';
+  const {data:likesData,error}=await sb.from('character_likes').select('user_id,character_id,created_at').order('created_at',{ascending:false});
+  if(error){status.textContent='불러오기에 실패했어요.';grid.innerHTML='';empty.hidden=false;empty.querySelector('h3').textContent='좋아요 기록을 불러오지 못했어요.';empty.querySelector('p').textContent=error.message;return;}
+  const rows=likesData||[];
+  totalEl.textContent=`전체 ${rows.length}개`;
+  grid.innerHTML='';
+  if(!rows.length){empty.hidden=false;status.textContent='좋아요 기록이 없습니다.';return;}
+  empty.hidden=true;
+  const ids=[...new Set(rows.map(r=>r.user_id))];
+  let profileMap=new Map();
+  if(ids.length){
+    const {data:pRows,error:pErr}=await sb.from('profiles').select('id,nickname,avatar_url').in('id',ids);
+    if(!pErr)(pRows||[]).forEach(p=>profileMap.set(p.id,p));
+  }
+  C.forEach(c=>{
+    const mine=rows.filter(r=>Number(r.character_id)===c.id);
+    if(!mine.length)return;
+    const card=document.createElement('div');card.className='master-like-card';
+    const users=mine.map(r=>{
+      const p=profileMap.get(r.user_id);
+      const name=p?.nickname||'프로필 미작성 사용자';
+      const date=r.created_at?new Date(r.created_at).toLocaleString('ko-KR',{dateStyle:'short',timeStyle:'short'}):'';
+      const avatar=p?.avatar_url?`<img class="master-like-avatar" src="${p.avatar_url}" alt="">`:'<span class="master-like-avatar">♡</span>';
+      return `<div class="master-like-user">${avatar}<div><strong>${name}</strong><small>${date}</small></div></div>`;
+    }).join('');
+    card.innerHTML=`<h3>${c.name}<span class="master-like-count">${mine.length}명</span></h3><div class="master-like-users">${users}</div>`;
+    grid.appendChild(card);
+  });
+  status.textContent=`캐릭터 ${grid.children.length}개에 좋아요가 있어요.`;
+}
+
+const originalRefreshProfileUI=refreshProfileUI;
+refreshProfileUI=function(){
+  originalRefreshProfileUI();
+  const masterNav=document.querySelector('#masterNav');
+  if(masterNav){masterNav.hidden=!(user&&profile?.is_master);}
+  if(user&&profile?.is_master&&document.querySelector('#master')?.classList.contains('active'))loadMasterLikes();
+};
+
+const originalShow=show;
+show=function(id){
+  if(id==='master' && !(user&&profile?.is_master)){
+    popup('접근할 수 없어요','마스터 계정만 좋아요 관리 페이지를 볼 수 있습니다.');
+    return;
+  }
+  originalShow(id);
+  if(id==='master')loadMasterLikes();
+};
+
+document.querySelector('#masterRefresh')?.addEventListener('click',loadMasterLikes);
