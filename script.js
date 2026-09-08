@@ -80,8 +80,26 @@ function openPreview(id){previewScrollY=window.scrollY||document.documentElement
 function closePreview(){document.querySelector('#preview').classList.remove('open');document.body.classList.remove('preview-open');document.documentElement.classList.remove('preview-open');document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));document.body.style.overflow='';requestAnimationFrame(()=>window.scrollTo(0,previewScrollY))}
 document.querySelector('#previewClose').onclick=closePreview;
 function goToCharacterPage(nextPage){const total=Math.ceil(C.length/per);page=Math.max(1,Math.min(nextPage,total));render();requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));}
-document.querySelector('#prev').onclick=()=>goToCharacterPage(page-1);document.querySelector('#next').onclick=()=>goToCharacterPage(page+1);document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>show(b.dataset.page));
-function show(id){closePreview();document.body.classList.remove('preview-open');document.documentElement.classList.remove('preview-open');document.body.style.overflow='';if(typeof window.resetHome==='function')window.resetHome();document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const target=document.querySelector('#'+id);if(target)target.classList.add('active');document.querySelectorAll('[data-page]').forEach(n=>n.classList.toggle('active',n.dataset.page===id));requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));}
+document.querySelector('#prev').onclick=()=>goToCharacterPage(page-1);document.querySelector('#next').onclick=()=>goToCharacterPage(page+1);document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();show(b.dataset.page);}));
+function show(id){
+  try{
+    closePreview();
+    document.body.classList.remove('preview-open');
+    document.documentElement.classList.remove('preview-open');
+    document.body.style.overflow='';
+    if(typeof window.resetHome==='function') window.resetHome();
+    const pages=document.querySelectorAll('.page');
+    pages.forEach(p=>p.classList.remove('active'));
+    const target=document.getElementById(id);
+    if(!target){console.error('페이지를 찾을 수 없습니다:',id);return;}
+    target.classList.add('active');
+    document.querySelectorAll('[data-page]').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
+    requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
+  }catch(err){console.error('페이지 이동 오류:',err);alert('페이지를 여는 중 오류가 발생했어요. 새로고침 후 다시 시도해주세요.');}
+}
+window.show=show;
+document.getElementById('loginNav')?.addEventListener('click',function(e){e.preventDefault();show('login');});
+
 
 const profileModal=document.querySelector('#profileModal');
 document.querySelector('#profileNav').onclick=openProfile;document.querySelector('#profileClose').onclick=closeProfile;document.querySelector('.profile-backdrop').onclick=closeProfile;
