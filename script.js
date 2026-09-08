@@ -34,6 +34,20 @@ async function loadProfileAndLikes(){
   refreshProfileUI();render();
 }
 
+function renderMyLikes(){
+  const list=document.querySelector('#myLikesList'), count=document.querySelector('#myLikesCount'), empty=document.querySelector('#myLikesEmpty');
+  if(!list||!count||!empty)return;
+  count.textContent=`${likes.length} / 3`;
+  list.innerHTML='';
+  likes.map(id=>C.find(c=>c.id===id)).filter(Boolean).forEach(c=>{
+    const b=document.createElement('button'); b.className='my-like-item';
+    b.innerHTML=c.images&&c.images.length?`<img src="${c.images[0]}" alt="${c.name}"><span>${c.name}</span>`:`<span class="my-like-placeholder">IMAGE</span><span>${c.name}</span>`;
+    b.onclick=()=>{closeProfile(); show('characters'); requestAnimationFrame(()=>{const total=Math.ceil(C.length/per); const targetPage=Math.ceil(c.id/per); page=Math.max(1,Math.min(targetPage,total)); render(); requestAnimationFrame(()=>openPreview(c.id));});};
+    list.appendChild(b);
+  });
+  empty.hidden=likes.length!==0;
+}
+
 function refreshProfileUI(){
   const nav=document.querySelector('#profileNav');const auth=document.querySelector('#profileAuthArea');const create=document.querySelector('#profileCreateArea');const userArea=document.querySelector('#profileUserArea');const name=document.querySelector('#profileUserName');const status=document.querySelector('#profileStatus');
   const avatar=document.querySelector('#profileUserAvatar');const fallback=document.querySelector('#profileUserAvatarFallback');
@@ -57,7 +71,7 @@ async function toggleCardLike(id){
   const i=likes.indexOf(id);
   if(i>=0){const {error}=await sb.from('character_likes').delete().eq('user_id',user.id).eq('character_id',id);if(error)return alert('좋아요 취소에 실패했어요.');likes.splice(i,1)}
   else{if(likes.length>=3)return alert('좋아요는 최대 3명까지 선택할 수 있어요.');const {error}=await sb.from('character_likes').insert({user_id:user.id,character_id:id});if(error)return alert('좋아요 저장에 실패했어요.');likes.push(id)}
-  updateCardLikes();updateLikes();
+  updateCardLikes();updateLikes();renderMyLikes();
 }
 async function toggleLike(){if(current)await toggleCardLike(current.id)}
 
@@ -102,6 +116,19 @@ document.querySelector('#profileName').addEventListener('keydown',e=>{if(e.key==
 document.querySelector('#profileEmail').addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#profileSendEmail').click()});
 
 document.querySelector('#profileEdit').onclick=()=>{if(!profile)return;document.querySelector('#profileCreateArea').hidden=false;document.querySelector('#profileUserArea').hidden=true;document.querySelector('#profileName').value=profile.nickname;document.querySelector('#profileStatus').textContent='닉네임이나 프로필 사진을 변경할 수 있어요.';const box=document.querySelector('#profileAvatarPreview');box.innerHTML=profile.avatar_url?`<img src="${profile.avatar_url}" alt="현재 프로필 사진">`:'♡';};
+
+document.querySelector('#loginSendEmail').onclick=async()=>{
+  if(!sb)return alert('먼저 Supabase 설정을 완료해주세요.');
+  const email=document.querySelector('#loginEmail').value.trim();
+  if(!email||!email.includes('@'))return alert('올바른 이메일 주소를 입력해주세요.');
+  const btn=document.querySelector('#loginSendEmail'),msg=document.querySelector('#loginMessage'); btn.disabled=true; btn.textContent='로그인 메일 보내는 중...';
+  const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:window.location.origin+window.location.pathname,shouldCreateUser:false}});
+  btn.disabled=false; btn.textContent='이메일 인증 링크 받기';
+  if(error){msg.textContent='로그인 메일을 보내지 못했어요: '+error.message;msg.classList.add('error');return;}
+  msg.textContent='로그인 링크를 보냈어요! 이메일을 확인해주세요.';msg.classList.add('success');
+};
+document.querySelector('#loginToProfile').onclick=()=>{ if(user) openProfile(); else alert('먼저 이메일 인증 링크로 로그인해주세요.'); };
+document.querySelector('#loginEmail').addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#loginSendEmail').click()});
 
 document.querySelector('#profileLogout').onclick=async()=>{if(!sb)return;if(!confirm('로그아웃할까요?'))return;await sb.auth.signOut();user=null;profile=null;likes=[];refreshProfileUI();render();closeProfile()};
 
