@@ -1850,3 +1850,43 @@ body:before{
 #characters #grid .card-image{
   background:#fffafc !important;
 }
+
+/* v67 — 프로필을 만든 사용자만 좋아요 가능 */
+.profile-nav{font-weight:700 !important;}
+.profile-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:1000;}
+.profile-modal.open{display:flex;}
+.profile-backdrop{position:absolute;inset:0;background:rgba(75,70,82,.28);backdrop-filter:blur(3px);}
+.profile-box{position:relative;width:min(430px,calc(100% - 34px));box-sizing:border-box;background:#fffafc;border:1px solid #eadce3;border-radius:26px;padding:30px 30px 28px;box-shadow:0 18px 50px rgba(70,55,70,.16);text-align:center;z-index:1;}
+.profile-close{position:absolute;right:15px;top:10px;border:0;background:transparent;font-size:30px;line-height:1;color:#8d7f88;cursor:pointer;}
+.profile-deco{font-size:18px;letter-spacing:5px;color:#c8a8ba;margin-bottom:7px;}
+.profile-box h2{margin:0;color:#5f5660;font-size:28px;}
+.profile-status{margin:10px 0 24px;color:#7c7079;font-size:14px;line-height:1.7;}
+.profile-box label{display:block;text-align:left;margin:0 0 7px 4px;font-size:13px;font-weight:700;color:#655c65;}
+.profile-box input{width:100%;box-sizing:border-box;border:1px solid #e7d8df;background:#fff;border-radius:13px;padding:13px 14px;font:inherit;color:#554c54;outline:none;}
+.profile-box input:focus{border-color:#d6b8c8;box-shadow:0 0 0 3px rgba(214,184,200,.18);}
+.profile-main-btn,.profile-sub-btn{width:100%;border:0;border-radius:13px;padding:13px 16px;margin-top:13px;font:inherit;font-weight:700;cursor:pointer;}
+.profile-main-btn{background:#efdce6;color:#665560;}
+.profile-main-btn:hover{filter:brightness(.98);}
+.profile-note,.profile-login-note{font-size:12px;color:#94868f;line-height:1.65;margin:12px 0 0;}
+.profile-card-mini{display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;border:1px dashed #ddcbd5;border-radius:16px;background:#fff;}
+.profile-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#f5e5ec;color:#b989a4;font-size:20px;}
+.profile-card-mini strong{font-size:18px;color:#5f5660;}
+.profile-sub-btn{background:#f4eef1;color:#796c75;font-size:13px;}
+@media(max-width:650px){.profile-box{padding:27px 20px 24px;border-radius:22px}.profile-box h2{font-size:24px}}
+/* v68 이메일 인증 프로필 */
+.profile-box{max-height:calc(100vh - 30px);overflow:auto;}
+.profile-file-label{margin-top:16px !important;}
+.profile-upload-row{display:flex;align-items:center;gap:14px;text-align:left;margin-top:2px;}
+.profile-avatar.big{width:72px;height:72px;min-width:72px;font-size:28px;border:1px dashed #ddcbd5;overflow:hidden;background:#fff6fa;}
+.profile-avatar.big img{width:100%;height:100%;object-fit:cover;}
+.profile-upload-control{min-width:0;flex:1;}
+.profile-upload-control input{padding:9px !important;background:#fff;}
+.profile-upload-control small{display:block;color:#9a8c94;font-size:11px;margin-top:6px;line-height:1.5;}
+.profile-card-mini{position:relative;}
+.profile-avatar-img{width:48px;height:48px;border-radius:50%;object-fit:cover;border:1px solid #ead8e1;display:none;background:#fff;}
+.profile-avatar-img.show{display:block;}
+.profile-avatar.hide{display:none;}
+.profile-sub-btn + .profile-sub-btn{margin-top:8px;}
+#profileAuthMessage.success{color:#8b7180;}
+#profileAuthMessage.error{color:#b66c78;}
+@media(max-width:650px){.profile-upload-row{align-items:flex-start}.profile-box{max-height:calc(100vh - 20px);}}

@@ -1,5 +1,5 @@
 <!doctype html><html lang="ko"><head>
-<meta name="version" content="65"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>여울의 보석함</title><meta property="og:type" content="website">
+<meta name="version" content="68"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>여울의 보석함</title><meta property="og:type" content="website">
 <meta property="og:title" content="여울의 보석함">
 <meta property="og:description" content="여울의 캐릭터 아카이브">
 <meta property="og:image" content="https://yeoul17.github.io/YEOUL/share-preview.jpg">
@@ -14,7 +14,7 @@
 <meta name="twitter:image" content="https://yeoul17.github.io/YEOUL/share-preview.jpg">
 <meta name="twitter:image:alt" content="여울의 보석함">
 <link rel="stylesheet" href="style.css"></head><body>
-<aside class="side"><div class="logo"><div class="gem">◇</div><i>✦</i><i>✧</i><h1>여울의<br>보석함</h1><small>CHARACTER ARCHIVE</small></div><nav><button data-page="home" class="active">⌂　홈</button><button data-page="characters">♡　캐릭터</button><button data-page="pick">✧　여울's Pick</button></nav></aside>
+<aside class="side"><div class="logo"><div class="gem">◇</div><i>✦</i><i>✧</i><h1>여울의<br>보석함</h1><small>CHARACTER ARCHIVE</small></div><nav><button data-page="home" class="active">⌂　홈</button><button data-page="characters">♡　캐릭터</button><button data-page="pick">✧　여울's Pick</button><button id="profileNav" class="profile-nav">♡　프로필</button></nav></aside>
 <main><section id="home" class="page active">
 <div class="home">
   <div id="homeIntro" class="home-intro">
@@ -65,6 +65,38 @@
 <section id="characters" class="page"><header><div><div class="eyebrow">CHARACTER COLLECTION</div><h2>Characters</h2></div><span id="label"></span></header><div id="grid"></div><div class="pager"><button id="prev">←</button><span id="dots"></span><button id="next">→</button></div></section>
 <section id="pick" class="page"><header><div><div class="eyebrow">MY FAVORITES</div><h2>여울's Pick</h2></div></header><div class="empty">✦<h3>여울's Pick</h3><p>좋아하는 외관의 그림을 나중에 넣을 공간입니다.</p></div></section></main>
 <section id="preview" class="preview"><button id="previewClose" class="preview-close" aria-label="닫기">×</button><div class="preview-inner"><div class="preview-image" id="previewImage">IMAGE</div><div class="preview-copy"><div class="preview-label">CHARACTER</div><h2 id="previewName"></h2><p id="previewDesc"></p></div></div></section>
+<div id="profileModal" class="profile-modal" aria-hidden="true">
+  <div class="profile-backdrop"></div>
+  <div class="profile-box" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+    <button id="profileClose" class="profile-close" aria-label="프로필 창 닫기">×</button>
+    <div class="profile-deco">✦　✧　✦</div>
+    <h2 id="profileTitle">나의 프로필</h2>
+    <p id="profileStatus" class="profile-status">프로필을 만들면 좋아요를 누를 수 있어요.</p>
+    <div id="profileAuthArea">
+      <label for="profileEmail">이메일</label>
+      <input id="profileEmail" type="email" autocomplete="email" placeholder="이메일 주소를 입력해주세요">
+      <button id="profileSendEmail" class="profile-main-btn">이메일 인증 링크 받기</button>
+      <p id="profileAuthMessage" class="profile-note">이메일로 인증 링크를 보내드려요. 비밀번호는 필요하지 않습니다.</p>
+    </div>
+    <div id="profileCreateArea" hidden>
+      <label for="profileName">닉네임</label>
+      <input id="profileName" type="text" maxlength="20" placeholder="닉네임을 입력해주세요">
+      <label for="profileAvatar" class="profile-file-label">프로필 사진</label>
+      <div class="profile-upload-row">
+        <div id="profileAvatarPreview" class="profile-avatar big">♡</div>
+        <div class="profile-upload-control"><input id="profileAvatar" type="file" accept="image/png,image/jpeg,image/webp"><small>JPG / PNG / WEBP · 최대 5MB</small></div>
+      </div>
+      <button id="profileCreate" class="profile-main-btn">프로필 만들기</button>
+      <p class="profile-note">이메일 인증이 완료된 계정에 프로필이 저장됩니다.</p>
+    </div>
+    <div id="profileUserArea" hidden>
+      <div class="profile-card-mini"><img id="profileUserAvatar" class="profile-avatar-img" alt="프로필 사진"><span id="profileUserAvatarFallback" class="profile-avatar">♡</span><strong id="profileUserName"></strong></div>
+      <p class="profile-login-note">이 프로필로 좋아요를 누를 수 있습니다.<br>좋아요는 최대 3개까지 선택할 수 있어요.</p>
+      <button id="profileEdit" class="profile-sub-btn">프로필 수정</button>
+      <button id="profileLogout" class="profile-sub-btn">로그아웃</button>
+    </div>
+  </div>
+</div>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const intro = document.getElementById("homeIntro");
@@ -130,4 +162,4 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
-<script src="script.js"></script></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js"></script></body></html>
