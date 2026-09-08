@@ -117,18 +117,49 @@ document.querySelector('#profileEmail').addEventListener('keydown',e=>{if(e.key=
 
 document.querySelector('#profileEdit').onclick=()=>{if(!profile)return;document.querySelector('#profileCreateArea').hidden=false;document.querySelector('#profileUserArea').hidden=true;document.querySelector('#profileName').value=profile.nickname;document.querySelector('#profileStatus').textContent='닉네임이나 프로필 사진을 변경할 수 있어요.';const box=document.querySelector('#profileAvatarPreview');box.innerHTML=profile.avatar_url?`<img src="${profile.avatar_url}" alt="현재 프로필 사진">`:'♡';};
 
-document.querySelector('#loginSendEmail').onclick=async()=>{
+document.querySelector('#loginPasswordBtn').onclick=async()=>{
   if(!sb)return alert('먼저 Supabase 설정을 완료해주세요.');
   const email=document.querySelector('#loginEmail').value.trim();
+  const password=document.querySelector('#loginPassword').value;
+  const msg=document.querySelector('#loginMessage');
+  msg.classList.remove('error','success');
   if(!email||!email.includes('@'))return alert('올바른 이메일 주소를 입력해주세요.');
-  const btn=document.querySelector('#loginSendEmail'),msg=document.querySelector('#loginMessage'); btn.disabled=true; btn.textContent='로그인 메일 보내는 중...';
-  const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:window.location.origin+window.location.pathname,shouldCreateUser:false}});
-  btn.disabled=false; btn.textContent='이메일 인증 링크 받기';
-  if(error){msg.textContent='로그인 메일을 보내지 못했어요: '+error.message;msg.classList.add('error');return;}
+  if(!password)return alert('비밀번호를 입력해주세요.');
+  const btn=document.querySelector('#loginPasswordBtn');btn.disabled=true;btn.textContent='로그인 중...';
+  const {error}=await sb.auth.signInWithPassword({email,password});
+  btn.disabled=false;btn.textContent='로그인';
+  if(error){msg.textContent=error.message.includes('Email not confirmed')?'이메일 인증이 완료되지 않았어요. 받은 인증 메일에서 이메일을 인증해주세요.':'로그인에 실패했어요: '+error.message;msg.classList.add('error');return;}
+  msg.textContent='로그인되었습니다.';msg.classList.add('success');
+};
+document.querySelector('#signupPasswordBtn').onclick=async()=>{
+  if(!sb)return alert('먼저 Supabase 설정을 완료해주세요.');
+  const email=document.querySelector('#loginEmail').value.trim();
+  const password=document.querySelector('#loginPassword').value;
+  const msg=document.querySelector('#loginMessage');
+  msg.classList.remove('error','success');
+  if(!email||!email.includes('@'))return alert('올바른 이메일 주소를 입력해주세요.');
+  if(password.length<6)return alert('비밀번호는 6자 이상으로 입력해주세요.');
+  const btn=document.querySelector('#signupPasswordBtn');btn.disabled=true;btn.textContent='가입 중...';
+  const {data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin+window.location.pathname}});
+  btn.disabled=false;btn.textContent='회원가입';
+  if(error){msg.textContent='회원가입에 실패했어요: '+error.message;msg.classList.add('error');return;}
+  if(data.session){msg.textContent='회원가입과 로그인이 완료되었습니다.';msg.classList.add('success');}
+  else{msg.textContent='가입이 완료되었습니다. 이메일로 받은 인증 링크를 눌러 계정을 활성화해주세요.';msg.classList.add('success');}
+};
+document.querySelector('#loginOtpBtn').onclick=async()=>{
+  if(!sb)return alert('먼저 Supabase 설정을 완료해주세요.');
+  const email=document.querySelector('#loginEmail').value.trim();
+  const msg=document.querySelector('#loginMessage');msg.classList.remove('error','success');
+  if(!email||!email.includes('@'))return alert('올바른 이메일 주소를 입력해주세요.');
+  const btn=document.querySelector('#loginOtpBtn');btn.disabled=true;btn.textContent='인증 메일 보내는 중...';
+  const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:window.location.origin+window.location.pathname,shouldCreateUser:true}});
+  btn.disabled=false;btn.textContent='이메일 인증으로 간편 로그인';
+  if(error){msg.textContent='인증 메일을 보내지 못했어요: '+error.message;msg.classList.add('error');return;}
   msg.textContent='로그인 링크를 보냈어요! 이메일을 확인해주세요.';msg.classList.add('success');
 };
-document.querySelector('#loginToProfile').onclick=()=>{ if(user) openProfile(); else alert('먼저 이메일 인증 링크로 로그인해주세요.'); };
-document.querySelector('#loginEmail').addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#loginSendEmail').click()});
+document.querySelector('#loginToProfile').onclick=()=>{ if(user) openProfile(); else alert('먼저 로그인해주세요.'); };
+document.querySelector('#loginEmail').addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#loginPassword').focus()});
+document.querySelector('#loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#loginPasswordBtn').click()});
 
 document.querySelector('#profileLogout').onclick=async()=>{if(!sb)return;if(!confirm('로그아웃할까요?'))return;await sb.auth.signOut();user=null;profile=null;likes=[];refreshProfileUI();render();closeProfile()};
 
