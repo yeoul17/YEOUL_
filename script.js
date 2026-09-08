@@ -89,7 +89,13 @@ async function toggleCardLike(id){
 async function toggleLike(){if(current)await toggleCardLike(current.id)}
 
 let previewScrollY=0;
-function openPreview(id){previewScrollY=window.scrollY||document.documentElement.scrollTop||0;current=C.find(x=>x.id===id);document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));const selected=[...document.querySelectorAll('.card')].find(c=>c.querySelector('.num')?.textContent===String(current.id).padStart(2,'0'));if(selected)selected.classList.add('selected');const previewInner=document.querySelector('#preview .preview-inner');const previewDesc=document.querySelector('#previewDesc');if(previewInner){previewInner.scrollTop=0;previewInner.scrollLeft=0;}if(previewDesc){previewDesc.scrollTop=0;previewDesc.scrollLeft=0;}document.querySelector('#previewName').textContent=current.name;document.querySelector('#previewDesc').innerHTML=current.description.split('\n').map(line=>{const parts=line.split(' : ');return parts.length>1?`<span class="info-line"><b>${parts.shift()} :</b> ${parts.join(' : ')}</span>`:`<span class="info-line intro-line">${line}</span>`}).join('');renderPreviewImage();document.querySelector('#preview').classList.add('open');if(previewInner){previewInner.scrollTop=0;previewInner.scrollLeft=0;}document.body.classList.add('preview-open');document.documentElement.classList.add('preview-open');document.body.style.overflow='hidden'}
+function openPreview(id){
+  if(!user){
+    alert('캐릭터를 보려면 먼저 로그인해주세요.\n\n로그인 페이지에서 이메일과 비밀번호로 로그인하거나 이메일 간편인증을 이용할 수 있어요.');
+    show('login');
+    return;
+  }
+  previewScrollY=window.scrollY||document.documentElement.scrollTop||0;current=C.find(x=>x.id===id);document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));const selected=[...document.querySelectorAll('.card')].find(c=>c.querySelector('.num')?.textContent===String(current.id).padStart(2,'0'));if(selected)selected.classList.add('selected');const previewInner=document.querySelector('#preview .preview-inner');const previewDesc=document.querySelector('#previewDesc');if(previewInner){previewInner.scrollTop=0;previewInner.scrollLeft=0;}if(previewDesc){previewDesc.scrollTop=0;previewDesc.scrollLeft=0;}document.querySelector('#previewName').textContent=current.name;document.querySelector('#previewDesc').innerHTML=current.description.split('\n').map(line=>{const parts=line.split(' : ');return parts.length>1?`<span class="info-line"><b>${parts.shift()} :</b> ${parts.join(' : ')}</span>`:`<span class="info-line intro-line">${line}</span>`}).join('');renderPreviewImage();document.querySelector('#preview').classList.add('open');if(previewInner){previewInner.scrollTop=0;previewInner.scrollLeft=0;}document.body.classList.add('preview-open');document.documentElement.classList.add('preview-open');document.body.style.overflow='hidden'}
 function closePreview(){document.querySelector('#preview').classList.remove('open');document.body.classList.remove('preview-open');document.documentElement.classList.remove('preview-open');document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));document.body.style.overflow='';requestAnimationFrame(()=>window.scrollTo(0,previewScrollY))}
 document.querySelector('#previewClose').onclick=closePreview;
 function goToCharacterPage(nextPage){const total=Math.ceil(C.length/per);page=Math.max(1,Math.min(nextPage,total));render();requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));}
@@ -167,15 +173,35 @@ document.querySelector('#signupPasswordBtn').onclick=async()=>{
   else{alert('회원가입이 완료되었습니다!\n\n이메일로 인증 링크를 보냈어요. 인증 링크를 누른 뒤 다시 로그인해주세요.');}
 };
 
+const OTP_COOLDOWN_MS=60000;
+function otpCooldownRemaining(){const t=Number(localStorage.getItem('yeoul_otp_last_sent')||0);return Math.max(0,OTP_COOLDOWN_MS-(Date.now()-t));}
+function startOtpCooldown(btn){
+  const tick=()=>{const left=otpCooldownRemaining();if(left<=0){btn.disabled=false;btn.textContent='이메일 인증으로 간편 로그인';return;}btn.disabled=true;btn.textContent=`인증 메일 재전송 (${Math.ceil(left/1000)}초)`;setTimeout(tick,1000)};tick();
+}
 document.querySelector('#loginOtpBtn').onclick=async()=>{
   if(!sb)return alert('Supabase 설정이 완료되지 않았어요.');
-  const email=document.querySelector('#loginEmail').value.trim(); if(!email||!email.includes('@'))return alert('올바른 이메일 주소를 입력해주세요.');
-  const btn=document.querySelector('#loginOtpBtn');btn.disabled=true;btn.textContent='인증 메일 보내는 중...';
+  const email=document.querySelector('#loginEmail').value.trim();
+  if(!email||!email.includes('@'))return alert('올바른 이메일 주소를 입력해주세요.');
+  const btn=document.querySelector('#loginOtpBtn');
+  const remaining=otpCooldownRemaining();
+  if(remaining>0){startOtpCooldown(btn);return alert(`인증 메일을 방금 요청했어요.\n\n이메일 발송 제한을 피하기 위해 ${Math.ceil(remaining/1000)}초 후 다시 요청해주세요.\n이미 받은 메일이 있다면 새로 요청하지 말고 기존 인증 링크를 눌러주세요.`);}
+  btn.disabled=true;btn.textContent='인증 메일 보내는 중...';
   const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:window.location.origin+window.location.pathname,shouldCreateUser:true}});
-  btn.disabled=false;btn.textContent='이메일 인증으로 간편 로그인';
-  if(error){alert('이메일 간편인증 메일을 보내지 못했어요.\n\n'+authErrorMessage(error,'otp'));return;}
-  alert('인증 메일을 보냈어요!\n\n이메일을 열고 인증 링크를 눌러주세요.\n인증이 완료되면 자동으로 로그인되고 프로필 페이지로 바뀝니다.');
+  if(error){
+    btn.disabled=false;btn.textContent='이메일 인증으로 간편 로그인';
+    const raw=String(error.message||'');
+    if(raw.toLowerCase().includes('rate limit')||raw.toLowerCase().includes('rate_limit')){
+      localStorage.setItem('yeoul_otp_last_sent',String(Date.now()));
+      startOtpCooldown(btn);
+      return alert('이메일 발송 제한에 걸렸어요.\n\n짧은 시간에 인증 메일을 여러 번 요청해서 잠시 이메일 발송이 제한된 상태예요.\n\n잠시 기다린 뒤 다시 요청해주세요. 이미 받은 인증 메일이 있다면 기존 링크를 사용해주세요.');
+    }
+    return alert('이메일 간편인증 메일을 보내지 못했어요.\n\n'+authErrorMessage(error,'otp'));
+  }
+  localStorage.setItem('yeoul_otp_last_sent',String(Date.now()));
+  startOtpCooldown(btn);
+  alert('인증 메일을 보냈어요!\n\n이메일을 열고 인증 링크를 눌러주세요.\n인증이 완료되면 로그인 상태로 전환됩니다.');
 };
+
 document.querySelector('#loginToProfile').onclick=()=>{ if(user) openProfile(); else alert('먼저 로그인해주세요.'); };
 document.querySelector('#loginEmail').addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#loginPassword').focus()});
 document.querySelector('#loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#loginPasswordBtn').click()});
