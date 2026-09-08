@@ -51,10 +51,23 @@ function renderMyLikes(){
 function refreshProfileUI(){
   const nav=document.querySelector('#profileNav');const auth=document.querySelector('#profileAuthArea');const create=document.querySelector('#profileCreateArea');const userArea=document.querySelector('#profileUserArea');const name=document.querySelector('#profileUserName');const status=document.querySelector('#profileStatus');
   const avatar=document.querySelector('#profileUserAvatar');const fallback=document.querySelector('#profileUserAvatarFallback');
-  if(!SUPABASE_READY){nav.textContent='♡　프로필';auth.hidden=false;create.hidden=true;userArea.hidden=true;status.textContent='이메일 인증 기능을 사용하려면 Supabase 설정이 필요합니다.';return;}
-  if(user&&profile){nav.textContent='♡ '+profile.nickname;auth.hidden=true;create.hidden=true;userArea.hidden=false;name.textContent=profile.nickname;status.textContent='프로필이 준비되어 있어요. 이제 좋아요를 누를 수 있어요.';if(profile.avatar_url){avatar.src=profile.avatar_url;avatar.classList.add('show');fallback.classList.add('hide')}else{avatar.removeAttribute('src');avatar.classList.remove('show');fallback.classList.remove('hide')}}
-  else if(user&&!profile){nav.textContent='♡　프로필';auth.hidden=true;create.hidden=false;userArea.hidden=true;status.textContent='이메일 인증이 완료됐어요. 이제 프로필을 만들어주세요.'}
-  else{nav.textContent='♡　프로필';auth.hidden=false;create.hidden=true;userArea.hidden=true;status.textContent='프로필을 만들면 좋아요를 누를 수 있어요.'}
+  const loginNav=document.querySelector('#loginNav');
+  const loginTitle=document.querySelector('#loginTitle'),loginEyebrow=document.querySelector('#loginEyebrow'),loginBoxTitle=document.querySelector('#loginBoxTitle'),loginIntro=document.querySelector('#loginIntro');
+  if(!SUPABASE_READY){nav.textContent='♡　프로필';if(loginNav)loginNav.style.display='';auth.hidden=false;create.hidden=true;userArea.hidden=true;status.textContent='이메일 인증 기능을 사용하려면 Supabase 설정이 필요합니다.';return;}
+  if(user&&profile){
+    nav.textContent='♡ '+profile.nickname;
+    if(loginNav)loginNav.style.display='none';
+    auth.hidden=true;create.hidden=true;userArea.hidden=false;name.textContent=profile.nickname;status.textContent='프로필이 준비되어 있어요. 이제 좋아요를 누를 수 있어요.';
+    if(profile.avatar_url){avatar.src=profile.avatar_url;avatar.classList.add('show');fallback.classList.add('hide')}else{avatar.removeAttribute('src');avatar.classList.remove('show');fallback.classList.remove('hide')}
+    if(loginTitle)loginTitle.textContent='내 프로필'; if(loginEyebrow)loginEyebrow.textContent='MY PROFILE'; if(loginBoxTitle)loginBoxTitle.textContent='여울의 보석함 프로필'; if(loginIntro)loginIntro.textContent='로그인되어 있습니다. 프로필과 좋아요한 보석을 확인할 수 있어요.';
+  } else {
+    nav.textContent='♡　프로필';
+    if(loginNav)loginNav.style.display='';
+    if(user){auth.hidden=true;create.hidden=false;userArea.hidden=true;status.textContent='이메일 인증이 완료됐어요. 이제 프로필을 만들어주세요.';}
+    else{auth.hidden=false;create.hidden=true;userArea.hidden=true;status.textContent='프로필을 만들면 좋아요를 누를 수 있어요.';}
+    if(loginTitle)loginTitle.textContent='로그인'; if(loginEyebrow)loginEyebrow.textContent='MEMBER LOGIN'; if(loginBoxTitle)loginBoxTitle.textContent='여울의 보석함 로그인'; if(loginIntro)loginIntro.textContent='이메일과 비밀번호로 로그인해주세요.';
+  }
+  renderMyLikes();
 }
 function openProfile(){const m=document.querySelector('#profileModal');refreshProfileUI();m.classList.add('open');m.setAttribute('aria-hidden','false');setTimeout(()=>{document.querySelector(user&&profile?'#profileName':'#profileEmail')?.focus()},50)}
 function closeProfile(){const m=document.querySelector('#profileModal');m.classList.remove('open');m.setAttribute('aria-hidden','true')}
@@ -80,29 +93,11 @@ function openPreview(id){previewScrollY=window.scrollY||document.documentElement
 function closePreview(){document.querySelector('#preview').classList.remove('open');document.body.classList.remove('preview-open');document.documentElement.classList.remove('preview-open');document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));document.body.style.overflow='';requestAnimationFrame(()=>window.scrollTo(0,previewScrollY))}
 document.querySelector('#previewClose').onclick=closePreview;
 function goToCharacterPage(nextPage){const total=Math.ceil(C.length/per);page=Math.max(1,Math.min(nextPage,total));render();requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));}
-document.querySelector('#prev').onclick=()=>goToCharacterPage(page-1);document.querySelector('#next').onclick=()=>goToCharacterPage(page+1);document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();show(b.dataset.page);}));
-function show(id){
-  try{
-    closePreview();
-    document.body.classList.remove('preview-open');
-    document.documentElement.classList.remove('preview-open');
-    document.body.style.overflow='';
-    if(typeof window.resetHome==='function') window.resetHome();
-    const pages=document.querySelectorAll('.page');
-    pages.forEach(p=>p.classList.remove('active'));
-    const target=document.getElementById(id);
-    if(!target){console.error('페이지를 찾을 수 없습니다:',id);return;}
-    target.classList.add('active');
-    document.querySelectorAll('[data-page]').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
-    requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
-  }catch(err){console.error('페이지 이동 오류:',err);alert('페이지를 여는 중 오류가 발생했어요. 새로고침 후 다시 시도해주세요.');}
-}
-window.show=show;
-document.getElementById('loginNav')?.addEventListener('click',function(e){e.preventDefault();show('login');});
-
+document.querySelector('#prev').onclick=()=>goToCharacterPage(page-1);document.querySelector('#next').onclick=()=>goToCharacterPage(page+1);document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>show(b.dataset.page));
+function show(id){closePreview();document.body.classList.remove('preview-open');document.documentElement.classList.remove('preview-open');document.body.style.overflow='';if(typeof window.resetHome==='function')window.resetHome();document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const target=document.querySelector('#'+id);if(target)target.classList.add('active');document.querySelectorAll('[data-page]').forEach(n=>n.classList.toggle('active',n.dataset.page===id));requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));}
 
 const profileModal=document.querySelector('#profileModal');
-document.querySelector('#profileNav').onclick=openProfile;document.querySelector('#profileClose').onclick=closeProfile;document.querySelector('.profile-backdrop').onclick=closeProfile;
+document.querySelector('#profileNav').onclick=()=>{if(user&&profile)openProfile();else show('login')};document.querySelector('#profileClose').onclick=closeProfile;document.querySelector('.profile-backdrop').onclick=closeProfile;
 
 document.querySelector('#profileSendEmail').onclick=async()=>{
   if(!sb)return alert('먼저 Supabase 설정을 완료해주세요.');
@@ -135,45 +130,51 @@ document.querySelector('#profileEmail').addEventListener('keydown',e=>{if(e.key=
 
 document.querySelector('#profileEdit').onclick=()=>{if(!profile)return;document.querySelector('#profileCreateArea').hidden=false;document.querySelector('#profileUserArea').hidden=true;document.querySelector('#profileName').value=profile.nickname;document.querySelector('#profileStatus').textContent='닉네임이나 프로필 사진을 변경할 수 있어요.';const box=document.querySelector('#profileAvatarPreview');box.innerHTML=profile.avatar_url?`<img src="${profile.avatar_url}" alt="현재 프로필 사진">`:'♡';};
 
+function authErrorMessage(error, mode){
+  const raw=String(error?.message||'');
+  if(raw.includes('Invalid login credentials')) return '이메일 또는 비밀번호가 올바르지 않아요.\n\n이미 이메일 간편인증으로 가입했다면, 먼저 비밀번호 방식으로 회원가입을 완료해야 해요.';
+  if(raw.includes('Email not confirmed')) return '이메일 인증이 아직 완료되지 않았어요.\n\n받은 인증 메일의 링크를 먼저 눌러주세요.';
+  if(raw.includes('User already registered')) return '이미 가입된 이메일이에요.\n\n로그인 버튼을 이용하거나 이메일 인증으로 간편 로그인을 해주세요.';
+  if(raw.includes('Signups not allowed')) return '현재 Supabase에서 신규 회원가입이 허용되지 않아 계정을 만들 수 없어요.\n\nSupabase > Authentication > Sign In > Allow new users to sign up을 켜주세요.';
+  if(raw.includes('Password should be at least')) return '비밀번호는 6자 이상이어야 해요.';
+  return (mode==='login'?'로그인에 실패했어요.':'회원가입에 실패했어요.')+'\n\n'+raw;
+}
+
 document.querySelector('#loginPasswordBtn').onclick=async()=>{
-  if(!sb)return alert('먼저 Supabase 설정을 완료해주세요.');
-  const email=document.querySelector('#loginEmail').value.trim();
-  const password=document.querySelector('#loginPassword').value;
-  const msg=document.querySelector('#loginMessage');
-  msg.classList.remove('error','success');
+  if(!sb)return alert('Supabase 설정이 완료되지 않았어요.\n\n먼저 supabase-config.js를 확인해주세요.');
+  const email=document.querySelector('#loginEmail').value.trim(); const password=document.querySelector('#loginPassword').value;
   if(!email||!email.includes('@'))return alert('올바른 이메일 주소를 입력해주세요.');
   if(!password)return alert('비밀번호를 입력해주세요.');
   const btn=document.querySelector('#loginPasswordBtn');btn.disabled=true;btn.textContent='로그인 중...';
-  const {error}=await sb.auth.signInWithPassword({email,password});
+  const {data,error}=await sb.auth.signInWithPassword({email,password});
   btn.disabled=false;btn.textContent='로그인';
-  if(error){msg.textContent=error.message.includes('Email not confirmed')?'이메일 인증이 완료되지 않았어요. 받은 인증 메일에서 이메일을 인증해주세요.':'로그인에 실패했어요: '+error.message;msg.classList.add('error');return;}
-  msg.textContent='로그인되었습니다.';msg.classList.add('success');
+  if(error){alert(authErrorMessage(error,'login'));return;}
+  user=data?.user||user; await loadProfileAndLikes();
+  alert('로그인되었습니다!\n\n이제 프로필 페이지로 전환됩니다.');
+  show('login');
 };
+
 document.querySelector('#signupPasswordBtn').onclick=async()=>{
-  if(!sb)return alert('먼저 Supabase 설정을 완료해주세요.');
-  const email=document.querySelector('#loginEmail').value.trim();
-  const password=document.querySelector('#loginPassword').value;
-  const msg=document.querySelector('#loginMessage');
-  msg.classList.remove('error','success');
+  if(!sb)return alert('Supabase 설정이 완료되지 않았어요.');
+  const email=document.querySelector('#loginEmail').value.trim(); const password=document.querySelector('#loginPassword').value;
   if(!email||!email.includes('@'))return alert('올바른 이메일 주소를 입력해주세요.');
   if(password.length<6)return alert('비밀번호는 6자 이상으로 입력해주세요.');
   const btn=document.querySelector('#signupPasswordBtn');btn.disabled=true;btn.textContent='가입 중...';
   const {data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin+window.location.pathname}});
   btn.disabled=false;btn.textContent='회원가입';
-  if(error){msg.textContent='회원가입에 실패했어요: '+error.message;msg.classList.add('error');return;}
-  if(data.session){msg.textContent='회원가입과 로그인이 완료되었습니다.';msg.classList.add('success');}
-  else{msg.textContent='가입이 완료되었습니다. 이메일로 받은 인증 링크를 눌러 계정을 활성화해주세요.';msg.classList.add('success');}
+  if(error){alert(authErrorMessage(error,'signup'));return;}
+  if(data.session){user=data.user;await loadProfileAndLikes();alert('회원가입과 로그인이 완료되었습니다!\n\n프로필 페이지로 이동합니다.');show('login');}
+  else{alert('회원가입이 완료되었습니다!\n\n이메일로 인증 링크를 보냈어요. 인증 링크를 누른 뒤 다시 로그인해주세요.');}
 };
+
 document.querySelector('#loginOtpBtn').onclick=async()=>{
-  if(!sb)return alert('먼저 Supabase 설정을 완료해주세요.');
-  const email=document.querySelector('#loginEmail').value.trim();
-  const msg=document.querySelector('#loginMessage');msg.classList.remove('error','success');
-  if(!email||!email.includes('@'))return alert('올바른 이메일 주소를 입력해주세요.');
+  if(!sb)return alert('Supabase 설정이 완료되지 않았어요.');
+  const email=document.querySelector('#loginEmail').value.trim(); if(!email||!email.includes('@'))return alert('올바른 이메일 주소를 입력해주세요.');
   const btn=document.querySelector('#loginOtpBtn');btn.disabled=true;btn.textContent='인증 메일 보내는 중...';
   const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:window.location.origin+window.location.pathname,shouldCreateUser:true}});
   btn.disabled=false;btn.textContent='이메일 인증으로 간편 로그인';
-  if(error){msg.textContent='인증 메일을 보내지 못했어요: '+error.message;msg.classList.add('error');return;}
-  msg.textContent='로그인 링크를 보냈어요! 이메일을 확인해주세요.';msg.classList.add('success');
+  if(error){alert('이메일 간편인증 메일을 보내지 못했어요.\n\n'+authErrorMessage(error,'otp'));return;}
+  alert('인증 메일을 보냈어요!\n\n이메일을 열고 인증 링크를 눌러주세요.\n인증이 완료되면 자동으로 로그인되고 프로필 페이지로 바뀝니다.');
 };
 document.querySelector('#loginToProfile').onclick=()=>{ if(user) openProfile(); else alert('먼저 로그인해주세요.'); };
 document.querySelector('#loginEmail').addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#loginPassword').focus()});
@@ -181,5 +182,5 @@ document.querySelector('#loginPassword').addEventListener('keydown',e=>{if(e.key
 
 document.querySelector('#profileLogout').onclick=async()=>{if(!sb)return;if(!confirm('로그아웃할까요?'))return;await sb.auth.signOut();user=null;profile=null;likes=[];refreshProfileUI();render();closeProfile()};
 
-if(sb){sb.auth.onAuthStateChange((event,session)=>{user=session?.user||null;setTimeout(async()=>{await loadProfileAndLikes();if(event==='SIGNED_IN'){closeProfile();setTimeout(()=>{if(!profile)openProfile()},250)}},0)});sb.auth.getSession().then(async({data})=>{user=data.session?.user||null;await loadProfileAndLikes();});}
+if(sb){sb.auth.onAuthStateChange((event,session)=>{user=session?.user||null;setTimeout(async()=>{await loadProfileAndLikes();if(event==='SIGNED_IN'){closeProfile();setTimeout(()=>{refreshProfileUI();show('login')},250)}},0)});sb.auth.getSession().then(async({data})=>{user=data.session?.user||null;await loadProfileAndLikes();});}
 render();refreshProfileUI();
