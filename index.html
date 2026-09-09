@@ -1,5 +1,5 @@
 <!doctype html><html lang="ko"><head>
-<meta name="version" content="88"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>여울의 보석함</title><meta property="og:type" content="website">
+<meta name="version" content="89"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>여울의 보석함</title><meta property="og:type" content="website">
 <meta property="og:title" content="여울의 보석함">
 <meta property="og:description" content="여울의 캐릭터 아카이브">
 <meta property="og:image" content="https://yeoul17.github.io/YEOUL/share-preview.jpg">
@@ -13,7 +13,7 @@
 <meta name="twitter:description" content="여울의 캐릭터 아카이브">
 <meta name="twitter:image" content="https://yeoul17.github.io/YEOUL/share-preview.jpg">
 <meta name="twitter:image:alt" content="여울의 보석함">
-<link rel="stylesheet" href="style.css?v=88"><style id="v86-final-fix">
+<link rel="stylesheet" href="style.css?v=89"><style id="v86-final-fix">
 /* v85: 실제 문서 흐름을 사용해 작은 창에서도 홈 설명서가 절대 잘리지 않게 함 */
 html, body { overflow-x:hidden !important; }
 @media (min-width:651px) {
@@ -99,7 +99,93 @@ html, body { overflow-x:hidden !important; }
   #profileCreateArea .profile-avatar.big { width:min(320px,82vw) !important; height:min(320px,82vw) !important; min-width:0 !important; }
   #profileCreateArea .profile-upload-control, #profileCreateArea #profileCreate { max-width:min(320px,82vw) !important; }
 }
-</style></head><body>
+</style>
+<style id="v89-layout-fix">
+/* v89: 모바일/PC 홈과 프로필 전환을 마지막 규칙으로 확정 */
+
+/* PC: 홈 첫 화면은 한 화면, 설명서를 연 뒤에만 문서 스크롤 */
+@media (min-width:651px){
+  html,body{overflow-x:hidden!important;}
+  html:not(.home-guide-open), body:not(.home-guide-open){overflow-y:hidden!important;}
+  html.home-guide-open, body.home-guide-open{overflow-y:auto!important;}
+
+  #home .home{overflow:visible!important;}
+  #home .home-intro:not(.opened){height:calc(100vh - 110px)!important;min-height:calc(100vh - 110px)!important;overflow:hidden!important;}
+  #home .home-intro.opened{height:210px!important;min-height:210px!important;overflow:visible!important;position:relative!important;}
+  #home .home-intro.opened + .home-content{position:relative!important;width:min(900px,92%)!important;margin:0 auto!important;height:auto!important;max-height:none!important;overflow:visible!important;padding:0 0 45px!important;}
+  #home .home-content .guide{height:auto!important;max-height:none!important;overflow:visible!important;}
+  #home .home-content .social{margin-bottom:30px!important;}
+
+  /* 실제로 설명서를 여는 동안에만 body 스크롤 허용 */
+  body:not(.home-guide-open) #home .home-content{display:none!important;}
+}
+
+/* 홈 설명서 애니메이션: 좌우 이동 금지, 아래에서 위로 충분히 느리게 */
+#home .home-content{opacity:0!important;visibility:hidden!important;transform:translate3d(0,110px,0)!important;}
+#home .home-content.visible{opacity:1!important;visibility:visible!important;animation:v89GuideRise 1.45s cubic-bezier(.16,.72,.22,1) both!important;}
+@keyframes v89GuideRise{
+  0%{opacity:0;transform:translate3d(0,110px,0);}
+  55%{opacity:.72;transform:translate3d(0,45px,0);}
+  82%{opacity:.94;transform:translate3d(0,12px,0);}
+  100%{opacity:1;transform:translate3d(0,0,0);}
+}
+
+/* 모바일: 제목/보석함과 설명서 제목이 절대 겹치지 않게 열린 상단 영역을 분리 */
+@media(max-width:650px){
+  html,body{overflow-x:hidden!important;}
+  main{padding-top:78px!important;overflow:visible!important;}
+  #home.page.active{padding:0!important;overflow:visible!important;}
+  #home .home{width:100%!important;min-height:calc(100vh - 78px)!important;height:auto!important;overflow:visible!important;padding:0 0 35px!important;display:block!important;}
+  #home .home-intro:not(.opened){height:calc(100vh - 78px)!important;min-height:calc(100vh - 78px)!important;overflow:hidden!important;display:flex!important;}
+  #home .home-intro.opened{
+    height:250px!important;min-height:250px!important;width:100%!important;
+    position:relative!important;display:block!important;overflow:visible!important;padding:0!important;
+  }
+  #home .home-intro.opened .home-title{
+    position:absolute!important;top:12px!important;left:50%!important;transform:translateX(-50%)!important;
+    width:max-content!important;max-width:92%!important;white-space:nowrap!important;
+    font-size:27px!important;line-height:1.2!important;margin:0!important;z-index:2!important;
+  }
+  #home .home-intro.opened .chest-button{
+    position:absolute!important;top:58px!important;left:50%!important;transform:translateX(-50%) scale(.43)!important;
+    margin:0!important;z-index:1!important;
+  }
+  #home .home-intro.opened .chest-hint{display:none!important;}
+  #home .home-content,
+  #home .home-content.visible,
+  #home .home-content.visible.second{
+    position:relative!important;left:auto!important;right:auto!important;top:auto!important;
+    width:100%!important;max-width:100%!important;height:auto!important;min-height:0!important;
+    margin:0!important;padding:0 0 28px!important;overflow:visible!important;
+    transform:none!important;box-sizing:border-box!important;
+  }
+  #home .home-content h2{
+    position:relative!important;display:block!important;z-index:3!important;
+    width:100%!important;max-width:100%!important;margin:0 0 18px!important;
+    padding:0 16px!important;box-sizing:border-box!important;
+    font-size:32px!important;line-height:1.25!important;white-space:nowrap!important;
+    overflow:visible!important;text-align:center!important;
+  }
+  #home .home-content .guide,
+  #home #guideSecond.second-guide{
+    position:relative!important;z-index:3!important;width:calc(100% - 32px)!important;max-width:none!important;
+    margin:0 16px!important;box-sizing:border-box!important;height:auto!important;min-height:0!important;
+    max-height:none!important;overflow:visible!important;padding:25px 18px!important;
+    line-height:1.75!important;font-size:13px!important;
+  }
+  #home .home-content .guide p,#home .home-content .guide li{font-size:13px!important;line-height:1.75!important;}
+  #home .home-content .social{width:calc(100% - 32px)!important;margin:18px 16px 0!important;box-sizing:border-box!important;}
+
+  /* 모바일 프로필: 제목은 고정 헤더 아래에서 바로 시작 */
+  .profile-modal{top:78px!important;left:0!important;right:0!important;bottom:0!important;z-index:90!important;overflow-y:auto!important;}
+  .profile-modal .profile-box{width:100%!important;margin:0!important;padding:18px 18px 55px!important;min-height:0!important;}
+  .profile-modal .profile-box h2{display:block!important;visibility:visible!important;margin:0 0 8px!important;font-size:30px!important;line-height:1.25!important;}
+}
+
+/* 홈을 누르면 프로필의 active 스타일이 절대 남지 않도록 명시 */
+.side nav button[data-page="home"].active + button + button + button + button.active{background:transparent!important;}
+</style>
+</head><body>
 <aside class="side"><div class="logo"><div class="gem">◇</div><i>✦</i><i>✧</i><h1>여울의<br>보석함</h1><small>CHARACTER ARCHIVE</small></div><nav><button data-page="home" class="active">⌂　홈</button><button data-page="characters">♡　캐릭터</button><button data-page="pick">✧　여울's Pick</button><button data-page="login" id="loginNav">↪　로그인</button><button id="profileNav" class="profile-nav">♡　프로필</button><button data-page="master" id="masterNav" class="master-nav" hidden>◆　마스터</button></nav></aside>
 <main><section id="home" class="page active">
 <div class="home">
@@ -256,4 +342,4 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js?v=88"></script></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js?v=89"></script></body></html>

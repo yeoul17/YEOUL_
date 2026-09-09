@@ -112,6 +112,8 @@ document.querySelector('#prev').onclick=()=>goToCharacterPage(page-1);document.q
 function show(id){
   closePreview();
   closeProfile();
+  const pm=document.querySelector("#profileModal"); if(pm){pm.classList.remove("open");pm.setAttribute("aria-hidden","true");}
+  const pn=document.querySelector("#profileNav"); if(pn)pn.classList.remove("active");
   document.body.classList.remove('preview-open');
   document.documentElement.classList.remove('preview-open');
   document.body.style.overflow='';
@@ -298,7 +300,7 @@ if(sb){
         if(pwError)popup('비밀번호 변경 실패',authErrorMessage(pwError,'reset'));
         else popup('비밀번호 변경 완료','새 비밀번호가 설정됐어요. 이제 이메일과 새 비밀번호로 로그인할 수 있어요.');
       }
-      if(event==='SIGNED_IN'){openProfile();}
+      if(event==='SIGNED_IN'){ const currentPage=document.querySelector('.page.active')?.id; if(currentPage==='login') openProfile(); }
       if(event==='SIGNED_OUT'){profile=null;likes=[];setLoginMode('login');refreshProfileUI();render();show('login');}
     },0);
   });
