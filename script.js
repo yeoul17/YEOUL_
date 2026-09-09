@@ -146,7 +146,7 @@ document.querySelector('#profileCreate').onclick=async()=>{
 document.querySelector('#profileAvatar').onchange=(e)=>{const file=e.target.files[0];const box=document.querySelector('#profileAvatarPreview');if(!file){box.innerHTML='♡';return}if(file.size>5*1024*1024){e.target.value='';box.innerHTML='♡';return alert('프로필 사진은 5MB 이하로 올려주세요.')}const reader=new FileReader();reader.onload=()=>{box.innerHTML=`<img src="${reader.result}" alt="미리보기">`};reader.readAsDataURL(file)};
 document.querySelector('#profileName').addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#profileCreate').click()});
 
-document.querySelector('#profileEdit').onclick=()=>{if(!profile)return;document.querySelector('#profileCreateArea').hidden=false;document.querySelector('#profileUserArea').hidden=true;document.querySelector('#profileName').value=profile.nickname;document.querySelector('#profileStatus').textContent='닉네임이나 프로필 사진을 변경할 수 있어요.';const box=document.querySelector('#profileAvatarPreview');box.innerHTML=profile.avatar_url?`<img src="${profile.avatar_url}" alt="현재 프로필 사진">`:'♡';};
+document.querySelector('#profileEdit').onclick=()=>{if(!profile)return;document.querySelector('#profileCreateArea').hidden=false;document.querySelector('#profileUserArea').hidden=true;document.querySelector('#profileName').value=profile.nickname;document.querySelector('#profileStatus').textContent='닉네임이나 프로필 사진을 변경할 수 있어요.';document.querySelector('#profileCreate').textContent='수정 완료';const box=document.querySelector('#profileAvatarPreview');box.innerHTML=profile.avatar_url?`<img src="${profile.avatar_url}" alt="현재 프로필 사진">`:'♡';};
 
 function authErrorMessage(error, mode){
   const raw=String(error?.message||error?.error_description||'').trim();

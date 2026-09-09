@@ -1,5 +1,5 @@
 <!doctype html><html lang="ko"><head>
-<meta name="version" content="85"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>여울의 보석함</title><meta property="og:type" content="website">
+<meta name="version" content="87"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>여울의 보석함</title><meta property="og:type" content="website">
 <meta property="og:title" content="여울의 보석함">
 <meta property="og:description" content="여울의 캐릭터 아카이브">
 <meta property="og:image" content="https://yeoul17.github.io/YEOUL/share-preview.jpg">
@@ -13,7 +13,7 @@
 <meta name="twitter:description" content="여울의 캐릭터 아카이브">
 <meta name="twitter:image" content="https://yeoul17.github.io/YEOUL/share-preview.jpg">
 <meta name="twitter:image:alt" content="여울의 보석함">
-<link rel="stylesheet" href="style.css?v=85"><style id="v85-final-fix">
+<link rel="stylesheet" href="style.css?v=86"><style id="v86-final-fix">
 /* v85: 실제 문서 흐름을 사용해 작은 창에서도 홈 설명서가 절대 잘리지 않게 함 */
 html, body { overflow-x:hidden !important; }
 @media (min-width:651px) {
@@ -27,12 +27,12 @@ html, body { overflow-x:hidden !important; }
   #home .home-content .guide { height:auto !important; max-height:none !important; min-height:0 !important; overflow:visible !important; }
   #home .home-content .social { margin-bottom:20px !important; }
 }
-/* v85: 설명서는 좌우 이동 없이 아래에서 위로만 등장 */
-#home .home-content { transition: opacity .18s ease !important; }
-#home .home-content.visible { animation: v85GuideRise .32s cubic-bezier(.22,.75,.25,1) both !important; transform:none !important; }
-@keyframes v85GuideRise {
-  from { opacity:0 !important; transform:translate3d(0,42px,0) !important; }
-  to { opacity:1 !important; transform:translate3d(0,0,0) !important; }
+/* v86: 설명서는 충분히 기다린 뒤 아래에서 위로 천천히 등장 */
+#home .home-content { transition:none !important; }
+#home .home-content.visible { animation:v86GuideRise .72s cubic-bezier(.22,.75,.25,1) both !important; }
+@keyframes v86GuideRise {
+  from { opacity:0; transform:translate3d(0,72px,0); }
+  to { opacity:1; transform:translate3d(0,0,0); }
 }
 /* v85: 프로필 이름은 설명문과 동일한 왼쪽 시작점 */
 .profile-modal #profileUserArea .profile-card-mini { text-align:left !important; }
@@ -47,6 +47,57 @@ html, body { overflow-x:hidden !important; }
 @media(max-width:650px){
   .profile-modal #profileUserArea .profile-card-mini { grid-template-columns:120px minmax(0,1fr) !important; }
   .profile-modal #profileUserArea .profile-side-info { grid-column:2 !important; }
+}
+
+/* v86 final: 설명서 애니메이션 충돌 제거 + 프로필 수정 화면 */
+#home .home-content {
+  opacity:0 !important;
+  visibility:hidden !important;
+  transform:translate3d(0,72px,0) !important;
+  transition:none !important;
+}
+#home .home-content.visible {
+  opacity:1 !important;
+  visibility:visible !important;
+  animation:v86GuideRise .72s cubic-bezier(.22,.75,.25,1) both !important;
+}
+@keyframes v86GuideRise {
+  from { opacity:0; transform:translate3d(0,72px,0); }
+  to { opacity:1; transform:translate3d(0,0,0); }
+}
+#profileCreateArea .profile-upload-row {
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:14px !important;
+  text-align:center !important;
+  margin-top:6px !important;
+}
+#profileCreateArea .profile-avatar.big {
+  width:320px !important;
+  height:320px !important;
+  min-width:320px !important;
+  aspect-ratio:1 / 1 !important;
+  border-radius:28px !important;
+  margin:0 auto !important;
+  overflow:hidden !important;
+}
+#profileCreateArea .profile-avatar.big img {
+  width:100% !important; height:100% !important; object-fit:contain !important;
+}
+#profileCreateArea .profile-upload-control {
+  width:100% !important; max-width:320px !important;
+  display:flex !important; flex-direction:column !important; align-items:center !important;
+}
+#profileCreateArea .profile-upload-control input {
+  width:100% !important; padding:10px !important;
+}
+#profileCreateArea #profileCreate {
+  max-width:320px !important; margin:14px auto 0 !important;
+}
+@media(max-width:650px){
+  #profileCreateArea .profile-avatar.big { width:min(320px,82vw) !important; height:min(320px,82vw) !important; min-width:0 !important; }
+  #profileCreateArea .profile-upload-control, #profileCreateArea #profileCreate { max-width:min(320px,82vw) !important; }
 }
 </style></head><body>
 <aside class="side"><div class="logo"><div class="gem">◇</div><i>✦</i><i>✧</i><h1>여울의<br>보석함</h1><small>CHARACTER ARCHIVE</small></div><nav><button data-page="home" class="active">⌂　홈</button><button data-page="characters">♡　캐릭터</button><button data-page="pick">✧　여울's Pick</button><button data-page="login" id="loginNav">↪　로그인</button><button id="profileNav" class="profile-nav">♡　프로필</button><button data-page="master" id="masterNav" class="master-nav" hidden>◆　마스터</button></nav></aside>
@@ -185,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
       guideTimer = window.setTimeout(function () {
         content.classList.add("visible");
         guideTimer = null;
-      }, 260);
+      }, 500);
     } else if (guideState === 1) {
       guideState = 2;
       title.textContent = "여울 설명서";
@@ -205,4 +256,4 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js?v=85"></script></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js?v=87"></script></body></html>
