@@ -1995,3 +1995,161 @@ main{min-height:100vh;}
   .profile-modal .profile-box{width:100% !important;padding:24px 18px 70px !important;}
   .profile-modal .profile-box h2{font-size:30px !important;}
 }
+
+/* v82 FINAL — 작은 PC 창 홈 설명서: 절대배치 때문에 문서 높이에 포함되지 않던 문제를 제거 */
+@media (min-width:651px) and (max-height:1000px){
+  html,body{
+    height:auto !important;
+    min-height:100% !important;
+    overflow-y:scroll !important;
+    overflow-x:hidden !important;
+  }
+  main{
+    height:auto !important;
+    min-height:0 !important;
+    overflow:visible !important;
+  }
+  #home.page.active{
+    height:auto !important;
+    min-height:0 !important;
+    overflow:visible !important;
+    padding-bottom:0 !important;
+  }
+  #home .home{
+    height:auto !important;
+    min-height:0 !important;
+    display:block !important;
+    overflow:visible !important;
+    padding:0 0 220px !important;
+  }
+  /* 처음 화면은 기존처럼 한 화면을 사용 */
+  #home .home-intro:not(.opened){
+    position:relative !important;
+    height:100vh !important;
+    min-height:100vh !important;
+    overflow:visible !important;
+  }
+  /* 열고 난 뒤에는 상단 고정 영역도 문서 흐름에 포함 */
+  #home .home-intro.opened{
+    position:relative !important;
+    top:auto !important;
+    left:auto !important;
+    width:100% !important;
+    height:245px !important;
+    min-height:245px !important;
+    margin:0 !important;
+    overflow:visible !important;
+    transform:none !important;
+  }
+  #home .home-intro.opened .home-title{
+    position:absolute !important;
+    top:12px !important;
+    left:50% !important;
+  }
+  #home .home-intro.opened .chest-button{
+    position:absolute !important;
+    top:64px !important;
+    left:50% !important;
+  }
+  /* 핵심: 설명서를 absolute/max-height로 자르지 않고 상단 영역 다음에 실제로 쌓음 */
+  #home .home-intro.opened + .home-content,
+  #home .home-intro.opened + .home-content.visible,
+  #home .home-intro.opened + .home-content.visible.second{
+    position:relative !important;
+    top:auto !important;
+    left:auto !important;
+    width:min(900px,92%) !important;
+    max-width:900px !important;
+    max-height:none !important;
+    height:auto !important;
+    min-height:0 !important;
+    margin:0 auto !important;
+    padding-bottom:140px !important;
+    overflow:visible !important;
+    transform:translateY(0) !important;
+    z-index:1 !important;
+  }
+  #home .home-content .guide,
+  #home #guideSecond.second-guide{
+    max-height:none !important;
+    height:auto !important;
+    min-height:0 !important;
+    overflow:visible !important;
+  }
+  #home .home-content.second .social{
+    margin-bottom:80px !important;
+  }
+}
+
+/* v82 — 프로필을 캐릭터 설명 페이지처럼 사진 왼쪽 / 이름 오른쪽 구조로 표시 */
+.profile-modal #profileUserArea{
+  max-width:920px !important;
+}
+.profile-modal #profileUserArea .profile-card-mini{
+  display:grid !important;
+  grid-template-columns:minmax(260px, 360px) minmax(0,1fr) !important;
+  align-items:center !important;
+  gap:55px !important;
+  width:100% !important;
+  max-width:920px !important;
+  min-height:320px !important;
+  margin:10px auto 28px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  text-align:left !important;
+}
+.profile-modal #profileUserArea .profile-avatar-img,
+.profile-modal #profileUserArea .profile-avatar{
+  grid-column:1 !important;
+  grid-row:1 !important;
+  width:100% !important;
+  height:320px !important;
+  min-width:0 !important;
+  border:1px dashed #ddcbd5 !important;
+  border-radius:28px !important;
+  background:#fffafc !important;
+  object-fit:contain !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  font-size:48px !important;
+  box-sizing:border-box !important;
+}
+.profile-modal #profileUserArea .profile-avatar-img.show{display:block !important;object-fit:contain !important;}
+.profile-modal #profileUserArea .profile-avatar.hide{display:none !important;}
+.profile-modal #profileUserArea .profile-card-mini strong{
+  grid-column:2 !important;
+  grid-row:1 !important;
+  align-self:center !important;
+  font-size:48px !important;
+  line-height:1.25 !important;
+  color:#5f5660 !important;
+  word-break:keep-all !important;
+}
+.profile-modal #profileUserArea .profile-login-note{
+  max-width:680px !important;
+  margin:0 auto 6px !important;
+  text-align:center !important;
+}
+@media(max-width:800px){
+  .profile-modal #profileUserArea .profile-card-mini{
+    grid-template-columns:minmax(190px,280px) minmax(0,1fr) !important;
+    gap:30px !important;
+    min-height:260px !important;
+  }
+  .profile-modal #profileUserArea .profile-avatar-img,
+  .profile-modal #profileUserArea .profile-avatar{height:260px !important;}
+  .profile-modal #profileUserArea .profile-card-mini strong{font-size:36px !important;}
+}
+@media(max-width:650px){
+  .profile-modal #profileUserArea .profile-card-mini{
+    grid-template-columns:120px minmax(0,1fr) !important;
+    gap:18px !important;
+    min-height:150px !important;
+  }
+  .profile-modal #profileUserArea .profile-avatar-img,
+  .profile-modal #profileUserArea .profile-avatar{height:150px !important;border-radius:20px !important;}
+  .profile-modal #profileUserArea .profile-card-mini strong{font-size:28px !important;}
+}
