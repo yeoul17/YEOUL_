@@ -1963,3 +1963,35 @@ main{min-height:100vh;}
   .home-content .guide,.home-content .second-guide{max-height:none !important;height:auto !important;overflow:visible !important;}
   .home-content.second .social{margin-bottom:240px !important;}
 }
+
+
+/* v81 FINAL — 작은 PC 창에서 홈 설명서 전체가 실제 문서 높이를 갖도록 강제 */
+@media (min-width:651px) and (max-height:1000px){
+  html{height:auto !important;min-height:100% !important;overflow-y:scroll !important;overflow-x:hidden !important;}
+  body{height:auto !important;min-height:100% !important;overflow:visible !important;overflow-x:hidden !important;}
+  main{height:auto !important;min-height:100vh !important;overflow:visible !important;}
+  .page{height:auto !important;min-height:100vh !important;overflow:visible !important;}
+  #home{height:auto !important;min-height:100vh !important;overflow:visible !important;}
+  .home{height:auto !important;min-height:0 !important;display:block !important;overflow:visible !important;padding:0 0 180px !important;}
+  .home-intro{height:100vh !important;min-height:100vh !important;overflow:visible !important;}
+  .home-intro.opened{height:175px !important;min-height:175px !important;padding-top:10px !important;}
+  .home-content{height:auto !important;max-height:none !important;min-height:0 !important;overflow:visible !important;margin-left:auto !important;margin-right:auto !important;padding-bottom:120px !important;}
+  .home-content .guide,.home-content .second-guide{height:auto !important;max-height:none !important;min-height:0 !important;overflow:visible !important;}
+  .home-content.second .social{margin-bottom:80px !important;}
+}
+
+/* v81 FINAL — 프로필은 팝업처럼 문서 아래에 생기지 않고 메인 화면 자체로 표시 */
+.profile-modal{position:fixed !important;left:230px !important;right:0 !important;top:0 !important;bottom:0 !important;width:auto !important;min-height:100vh !important;height:auto !important;display:none;overflow-y:auto !important;overflow-x:hidden !important;align-items:flex-start !important;justify-content:flex-start !important;background:linear-gradient(135deg,#f5fbff 0%,#fffbea 55%,#f5fbff 100%) !important;z-index:4 !important;}
+.profile-modal.open{display:block !important;}
+.profile-modal .profile-box{position:relative !important;width:min(920px,calc(100% - 70px)) !important;max-width:920px !important;min-height:0 !important;height:auto !important;margin:0 auto !important;padding:32px 0 80px !important;border:0 !important;border-radius:0 !important;background:transparent !important;box-shadow:none !important;overflow:visible !important;text-align:center !important;}
+.profile-modal .profile-close,.profile-modal .profile-backdrop{display:none !important;}
+.profile-modal .profile-deco{margin:0 0 4px !important;}
+.profile-modal .profile-box h2{font-size:42px !important;margin:0 0 10px !important;}
+.profile-modal .profile-status{margin:0 0 18px !important;}
+.profile-modal #profileAuthArea,.profile-modal #profileCreateArea,.profile-modal #profileUserArea{max-width:680px;margin-left:auto;margin-right:auto;}
+.profile-modal .my-likes{margin-top:20px !important;padding-top:18px !important;}
+@media(max-width:650px){
+  .profile-modal{left:0 !important;right:0 !important;top:0 !important;bottom:0 !important;}
+  .profile-modal .profile-box{width:100% !important;padding:24px 18px 70px !important;}
+  .profile-modal .profile-box h2{font-size:30px !important;}
+}
