@@ -2153,3 +2153,65 @@ main{min-height:100vh;}
   .profile-modal #profileUserArea .profile-avatar{height:150px !important;border-radius:20px !important;}
   .profile-modal #profileUserArea .profile-card-mini strong{font-size:28px !important;}
 }
+
+
+/* v83 final: 작은 창에서 실제 콘텐츠 높이만큼만 스크롤 + 프로필 1:1 / 우측 정보 */
+@media (min-width:651px) and (max-height:1000px){
+  html,body{overflow-y:auto !important; height:auto !important; min-height:100% !important;}
+  main{height:auto !important; min-height:0 !important; overflow:visible !important;}
+  #home.page.active{height:auto !important; min-height:0 !important; overflow:visible !important;}
+  #home .home{height:auto !important; min-height:0 !important; padding:0 0 40px !important; overflow:visible !important;}
+  #home .home-intro:not(.opened){height:100vh !important; min-height:100vh !important;}
+  #home .home-intro.opened{height:180px !important; min-height:180px !important; padding:0 !important; overflow:visible !important;}
+  #home .home-content, #home .home-content.visible, #home .home-content.visible.second{height:auto !important; max-height:none !important; min-height:0 !important; overflow:visible !important; padding:0 0 20px !important; margin-left:auto !important; margin-right:auto !important;}
+  #home .home-content .guide, #home #guideSecond.second-guide{height:auto !important; max-height:none !important; min-height:0 !important; overflow:visible !important;}
+  #home .home-content.second .social{margin-bottom:20px !important;}
+}
+
+/* 프로필: 사진은 항상 정사각형, 이름/안내/수정/로그아웃은 오른쪽 */
+.profile-modal #profileUserArea .profile-card-mini{
+  display:grid !important;
+  grid-template-columns:320px minmax(0,1fr) !important;
+  align-items:center !important;
+  gap:48px !important;
+  width:100% !important;
+  max-width:920px !important;
+  min-height:320px !important;
+  margin:10px auto 28px !important;
+  padding:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  text-align:left !important;
+}
+.profile-modal #profileUserArea .profile-photo-wrap{
+  width:320px !important; height:320px !important; aspect-ratio:1 / 1 !important;
+  border:1px dashed #ddcbd5 !important; border-radius:28px !important;
+  background:#fffafc !important; overflow:hidden !important;
+  display:flex !important; align-items:center !important; justify-content:center !important;
+}
+.profile-modal #profileUserArea .profile-avatar-img,
+.profile-modal #profileUserArea .profile-avatar{
+  width:100% !important; height:100% !important; aspect-ratio:1 / 1 !important;
+  border:0 !important; border-radius:0 !important; background:transparent !important;
+  object-fit:contain !important; margin:0 !important;
+}
+.profile-modal #profileUserArea .profile-card-mini strong{
+  display:block !important; margin:0 0 24px !important; font-size:48px !important; line-height:1.25 !important;
+}
+.profile-modal #profileUserArea .profile-side-info{display:flex !important; flex-direction:column !important; align-items:flex-start !important; justify-content:center !important;}
+.profile-modal #profileUserArea .profile-side-info .profile-login-note{max-width:none !important; margin:0 0 24px !important; text-align:left !important; line-height:1.9 !important;}
+.profile-modal #profileUserArea .profile-side-actions{display:flex !important; gap:10px !important; width:100% !important;}
+.profile-modal #profileUserArea .profile-side-actions .profile-sub-btn{width:auto !important; flex:0 0 auto !important; margin:0 !important; padding:12px 24px !important;}
+@media(max-width:800px){
+ .profile-modal #profileUserArea .profile-card-mini{grid-template-columns:260px minmax(0,1fr) !important; gap:28px !important; min-height:260px !important;}
+ .profile-modal #profileUserArea .profile-photo-wrap{width:260px !important;height:260px !important;}
+ .profile-modal #profileUserArea .profile-card-mini strong{font-size:36px !important;margin-bottom:18px !important;}
+}
+@media(max-width:650px){
+ .profile-modal #profileUserArea .profile-card-mini{grid-template-columns:120px minmax(0,1fr) !important; gap:18px !important; min-height:150px !important;}
+ .profile-modal #profileUserArea .profile-photo-wrap{width:120px !important;height:120px !important;border-radius:20px !important;}
+ .profile-modal #profileUserArea .profile-card-mini strong{font-size:28px !important;margin-bottom:12px !important;}
+ .profile-modal #profileUserArea .profile-side-info .profile-login-note{font-size:11px !important;margin-bottom:14px !important;}
+ .profile-modal #profileUserArea .profile-side-actions{gap:7px !important;flex-wrap:wrap !important;}
+ .profile-modal #profileUserArea .profile-side-actions .profile-sub-btn{padding:9px 13px !important;font-size:11px !important;}
+}
