@@ -1,5 +1,5 @@
 <!doctype html><html lang="ko"><head>
-<meta name="version" content="75"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>여울의 보석함</title><meta property="og:type" content="website">
+<meta name="version" content="85"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>여울의 보석함</title><meta property="og:type" content="website">
 <meta property="og:title" content="여울의 보석함">
 <meta property="og:description" content="여울의 캐릭터 아카이브">
 <meta property="og:image" content="https://yeoul17.github.io/YEOUL/share-preview.jpg">
@@ -13,7 +13,42 @@
 <meta name="twitter:description" content="여울의 캐릭터 아카이브">
 <meta name="twitter:image" content="https://yeoul17.github.io/YEOUL/share-preview.jpg">
 <meta name="twitter:image:alt" content="여울의 보석함">
-<link rel="stylesheet" href="style.css"></head><body>
+<link rel="stylesheet" href="style.css?v=85"><style id="v85-final-fix">
+/* v85: 실제 문서 흐름을 사용해 작은 창에서도 홈 설명서가 절대 잘리지 않게 함 */
+html, body { overflow-x:hidden !important; }
+@media (min-width:651px) {
+  html, body { height:auto !important; min-height:100% !important; overflow-y:auto !important; }
+  main { height:auto !important; min-height:100vh !important; overflow:visible !important; }
+  #home.page.active { height:auto !important; min-height:100vh !important; overflow:visible !important; }
+  #home .home { height:auto !important; min-height:100vh !important; overflow:visible !important; display:block !important; padding:0 0 40px !important; }
+  #home .home-intro:not(.opened) { height:100vh !important; min-height:100vh !important; display:flex !important; }
+  #home .home-intro.opened { height:190px !important; min-height:190px !important; display:flex !important; position:relative !important; overflow:visible !important; }
+  #home .home-intro.opened + .home-content { position:relative !important; width:min(900px,92%) !important; height:auto !important; max-height:none !important; min-height:0 !important; overflow:visible !important; margin:0 auto !important; padding:0 0 40px !important; }
+  #home .home-content .guide { height:auto !important; max-height:none !important; min-height:0 !important; overflow:visible !important; }
+  #home .home-content .social { margin-bottom:20px !important; }
+}
+/* v85: 설명서는 좌우 이동 없이 아래에서 위로만 등장 */
+#home .home-content { transition: opacity .18s ease !important; }
+#home .home-content.visible { animation: v85GuideRise .32s cubic-bezier(.22,.75,.25,1) both !important; transform:none !important; }
+@keyframes v85GuideRise {
+  from { opacity:0 !important; transform:translate3d(0,42px,0) !important; }
+  to { opacity:1 !important; transform:translate3d(0,0,0) !important; }
+}
+/* v85: 프로필 이름은 설명문과 동일한 왼쪽 시작점 */
+.profile-modal #profileUserArea .profile-card-mini { text-align:left !important; }
+.profile-modal #profileUserArea .profile-side-info { grid-column:2 !important; grid-row:1 !important; width:100% !important; display:flex !important; flex-direction:column !important; align-items:stretch !important; justify-content:center !important; text-align:left !important; }
+.profile-modal #profileUserArea .profile-side-info > strong { display:block !important; width:100% !important; align-self:stretch !important; margin:0 0 20px !important; padding:0 !important; text-align:left !important; }
+.profile-modal #profileUserArea .profile-side-info .profile-login-note { width:100% !important; margin:0 0 20px !important; text-align:left !important; }
+.profile-modal #profileUserArea .profile-side-actions { justify-content:flex-start !important; }
+@media(max-width:800px){
+  .profile-modal #profileUserArea .profile-card-mini { grid-template-columns:260px minmax(0,1fr) !important; }
+  .profile-modal #profileUserArea .profile-side-info { grid-column:2 !important; }
+}
+@media(max-width:650px){
+  .profile-modal #profileUserArea .profile-card-mini { grid-template-columns:120px minmax(0,1fr) !important; }
+  .profile-modal #profileUserArea .profile-side-info { grid-column:2 !important; }
+}
+</style></head><body>
 <aside class="side"><div class="logo"><div class="gem">◇</div><i>✦</i><i>✧</i><h1>여울의<br>보석함</h1><small>CHARACTER ARCHIVE</small></div><nav><button data-page="home" class="active">⌂　홈</button><button data-page="characters">♡　캐릭터</button><button data-page="pick">✧　여울's Pick</button><button data-page="login" id="loginNav">↪　로그인</button><button id="profileNav" class="profile-nav">♡　프로필</button><button data-page="master" id="masterNav" class="master-nav" hidden>◆　마스터</button></nav></aside>
 <main><section id="home" class="page active">
 <div class="home">
@@ -170,4 +205,4 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js"></script></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js?v=85"></script></body></html>
