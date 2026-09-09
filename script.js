@@ -121,6 +121,8 @@ function show(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   target.classList.add('active');
   document.querySelectorAll('[data-page]').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
+  document.querySelector('#profileNav')?.classList.remove('active');
+  if(id==='home'){document.body.classList.remove('home-guide-open');document.documentElement.classList.remove('home-guide-open');}
   refreshProfileUI();
   requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
 }

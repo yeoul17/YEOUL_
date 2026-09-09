@@ -2388,3 +2388,45 @@ html,body{overflow-x:hidden!important;}
   }
   .profile-modal .profile-status{margin:0 0 18px!important;text-align:center!important;}
 }
+
+/* v88 FINAL — 홈 스크롤은 상태에 따라 한 곳에서만, 설명서는 천천히 아래→위 */
+@media (min-width:651px){
+  html,body{height:100%;overflow-y:hidden!important;overflow-x:hidden!important;}
+  main{height:auto!important;min-height:100vh!important;overflow:visible!important;}
+  .page{overflow:visible!important;}
+  #home.page.active{height:auto!important;min-height:100vh!important;overflow:visible!important;}
+  #home .home{height:auto!important;min-height:100vh!important;overflow:visible!important;padding:0 0 50px!important;}
+  #home .home-intro:not(.opened){height:100vh!important;min-height:100vh!important;overflow:hidden!important;}
+  #home .home-intro.opened{height:190px!important;min-height:190px!important;overflow:visible!important;}
+  #home .home-content{max-height:none!important;height:auto!important;overflow:visible!important;}
+  body.home-guide-open,html.home-guide-open{height:auto!important;min-height:100%!important;overflow-y:auto!important;}
+  body.home-guide-open main{height:auto!important;overflow:visible!important;}
+}
+/* v88: 기존 애니메이션 이름들과 충돌하지 않도록 새 이름 사용 */
+#home .home-content{opacity:0!important;visibility:hidden!important;transform:translate3d(0,90px,0)!important;}
+#home .home-content.visible{opacity:1!important;visibility:visible!important;animation:v88GuideRise 1.15s cubic-bezier(.16,.72,.2,1) both!important;}
+@keyframes v88GuideRise{
+  from{opacity:0;transform:translate3d(0,90px,0);}
+  65%{opacity:.92;transform:translate3d(0,16px,0);}
+  to{opacity:1;transform:translate3d(0,0,0);}
+}
+/* 프로필: 이름은 사진과 수직 중앙, 설명과 버튼도 같은 오른쪽 영역 */
+.profile-modal #profileUserArea .profile-side-info{justify-content:center!important;align-self:stretch!important;}
+.profile-modal #profileUserArea .profile-side-info>strong{margin:0 0 18px!important;}
+
+@media(max-width:650px){
+  /* 모바일 상단 고정 메뉴 아래에서 홈 콘텐츠가 시작되도록 공간 확보 */
+  main{padding-top:78px!important;}
+  #home.page.active{padding-top:0!important;}
+  #home .home{min-height:calc(100vh - 78px)!important;padding-bottom:28px!important;}
+  #home .home-intro:not(.opened){height:calc(100vh - 78px)!important;min-height:calc(100vh - 78px)!important;}
+  /* 제목/보석함/설명서가 겹치지 않도록 열린 영역을 충분히 확보 */
+  #home .home-intro.opened{height:205px!important;min-height:205px!important;padding-top:8px!important;overflow:visible!important;}
+  #home .home-content{margin-top:0!important;padding-top:0!important;}
+  #home .home-content h2{position:relative!important;z-index:1!important;margin-top:0!important;}
+  #home .home-content .guide{position:relative!important;z-index:1!important;}
+  /* 모바일 프로필: 이름을 사진과 같은 세로 중심선에 맞춤 */
+  .profile-modal #profileUserArea .profile-card-mini{align-items:center!important;}
+  .profile-modal #profileUserArea .profile-side-info{align-self:stretch!important;justify-content:center!important;}
+  .profile-modal #profileUserArea .profile-side-info>strong{margin:0 0 14px!important;line-height:1.2!important;}
+}
