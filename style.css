@@ -2215,3 +2215,33 @@ main{min-height:100vh;}
  .profile-modal #profileUserArea .profile-side-actions{gap:7px !important;flex-wrap:wrap !important;}
  .profile-modal #profileUserArea .profile-side-actions .profile-sub-btn{padding:9px 13px !important;font-size:11px !important;}
 }
+
+/* v84 — 프로필 이름 정렬 + 설명서 아래→위 등장 효과 */
+.profile-modal #profileUserArea .profile-side-info{
+  align-items:flex-start !important;
+  justify-content:center !important;
+  text-align:left !important;
+}
+.profile-modal #profileUserArea .profile-side-info > strong{
+  display:block !important;
+  width:100% !important;
+  margin:0 0 24px !important;
+  text-align:left !important;
+}
+.profile-modal #profileUserArea .profile-side-info .profile-login-note{
+  width:100% !important;
+  text-align:left !important;
+  margin-left:0 !important;
+}
+
+/* 홈 설명서: 좌우 이동이 아닌 아래에서 위로 부드럽게 등장 */
+#home .home-content.visible{
+  animation:guideRiseUp .42s cubic-bezier(.22,.75,.25,1) both !important;
+}
+#home .home-content.visible.second{
+  animation:guideRiseUp .42s cubic-bezier(.22,.75,.25,1) both !important;
+}
+@keyframes guideRiseUp{
+  from{opacity:0;transform:translateY(42px) !important;}
+  to{opacity:1;transform:translateY(0) !important;}
+}
