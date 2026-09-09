@@ -2430,3 +2430,56 @@ html,body{overflow-x:hidden!important;}
   .profile-modal #profileUserArea .profile-side-info{align-self:stretch!important;justify-content:center!important;}
   .profile-modal #profileUserArea .profile-side-info>strong{margin:0 0 14px!important;line-height:1.2!important;}
 }
+
+
+/* v90 — 홈 설명서 표시/스크롤 상태를 실제 동작과 연결 */
+@media (min-width:651px){
+  html, body{overflow-x:hidden!important;}
+  html:not(.home-guide-open), body:not(.home-guide-open){overflow-y:hidden!important;}
+  html.home-guide-open, body.home-guide-open{overflow-y:auto!important;overflow-x:hidden!important;}
+  #home .home-intro.opened{height:255px!important;min-height:255px!important;}
+  #home .home-content{position:relative!important;z-index:2!important;max-height:none!important;overflow:visible!important;}
+  #home .home-content.visible{opacity:1!important;visibility:visible!important;animation:v90GuideRise 1.35s cubic-bezier(.22,.72,.2,1) both!important;}
+}
+@keyframes v90GuideRise{
+  from{opacity:0;transform:translate3d(0,70px,0)!important;}
+  60%{opacity:.82;transform:translate3d(0,20px,0)!important;}
+  to{opacity:1;transform:translate3d(0,0,0)!important;}
+}
+
+/* v90 — 모바일 홈: 보석함 제목/보석함과 설명서 제목을 완전히 분리 */
+@media (max-width:650px){
+  #home .home-intro.opened{
+    height:235px!important;min-height:235px!important;
+    position:relative!important;display:block!important;overflow:visible!important;
+  }
+  #home .home-intro.opened .home-title{
+    top:10px!important;left:50%!important;
+    transform:translateX(-50%)!important;
+    width:calc(100% - 24px)!important;
+    text-align:center!important;white-space:nowrap!important;
+    font-size:25px!important;line-height:1.2!important;
+  }
+  #home .home-intro.opened .chest-button{
+    top:55px!important;left:50%!important;
+    transform:translateX(-50%) scale(.38)!important;
+    transform-origin:top center!important;
+  }
+  #home .home-content{
+    position:relative!important;z-index:3!important;
+    margin:0 auto!important;padding-top:0!important;
+    width:calc(100% - 20px)!important;max-width:100%!important;
+  }
+  #home .home-content h2{
+    margin:0 0 14px!important;font-size:29px!important;line-height:1.2!important;
+  }
+  #home .home-content .guide{
+    width:100%!important;max-width:100%!important;box-sizing:border-box!important;
+    padding:22px 16px!important;
+    font-size:12px!important;line-height:1.7!important;
+  }
+  /* 모바일 프로필 닉네임을 사진 세로 중앙선에 맞춤 */
+  .profile-modal #profileUserArea .profile-side-info>strong{
+    transform:translateY(22px)!important;
+  }
+}
