@@ -74,8 +74,8 @@ function refreshProfileUI(){
   }
   renderMyLikes();
 }
-function openProfile(){const m=document.querySelector('#profileModal');refreshProfileUI();m.classList.add('open');m.setAttribute('aria-hidden','false');setTimeout(()=>{document.querySelector(user&&profile?'#profileName':user?'#profileName':'#loginEmail')?.focus()},50)}
-function closeProfile(){const m=document.querySelector('#profileModal');m.classList.remove('open');m.setAttribute('aria-hidden','true')}
+function openProfile(){const m=document.querySelector('#profileModal');if(!m)return;refreshProfileUI();document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));m.classList.add('open');m.setAttribute('aria-hidden','false');document.querySelectorAll('[data-page]').forEach(n=>n.classList.remove('active'));const nav=document.querySelector('#profileNav');if(nav)nav.classList.add('active');requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));setTimeout(()=>{document.querySelector(user&&profile?'#profileName':'#loginEmail')?.focus()},50)}
+function closeProfile(){const m=document.querySelector('#profileModal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true')}
 
 async function requireProfile(){
   if(user&&profile)return true;
@@ -191,7 +191,7 @@ async function finishAuth(session,message){
   user=session?.user||null;
   await loadProfileAndLikes();
   refreshProfileUI();
-  show('login');
+  openProfile();
   if(message)popup('로그인 완료',message+'\n\n이제 이 페이지는 내 프로필로 바뀌어요.');
 }
 
@@ -296,7 +296,7 @@ if(sb){
         if(pwError)popup('비밀번호 변경 실패',authErrorMessage(pwError,'reset'));
         else popup('비밀번호 변경 완료','새 비밀번호가 설정됐어요. 이제 이메일과 새 비밀번호로 로그인할 수 있어요.');
       }
-      if(event==='SIGNED_IN'){closeProfile();refreshProfileUI();show('login');}
+      if(event==='SIGNED_IN'){openProfile();}
       if(event==='SIGNED_OUT'){profile=null;likes=[];setLoginMode('login');refreshProfileUI();render();show('login');}
     },0);
   });
