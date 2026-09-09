@@ -323,13 +323,15 @@ document.addEventListener("DOMContentLoaded", function () {
       // 보석함이 현재 위치에서 시작해 위쪽의 작은 위치까지 실제로 이동하도록 FLIP 방식으로 애니메이션
       const startRect = chest.getBoundingClientRect();
       const introRect = intro.getBoundingClientRect();
+      // 시작점은 보석함의 "중심점"으로 잡아 수평 이동을 0으로 고정합니다.
       const startTop = startRect.top - introRect.top;
-      const startLeft = startRect.left - introRect.left;
+      const startCenterX = startRect.left - introRect.left + (startRect.width / 2);
+      const centerX = intro.clientWidth / 2;
       chest.style.setProperty("position", "absolute", "important");
       chest.style.setProperty("top", startTop + "px", "important");
-      chest.style.setProperty("left", startLeft + "px", "important");
+      chest.style.setProperty("left", startCenterX + "px", "important");
       chest.style.setProperty("margin", "0", "important");
-      chest.style.setProperty("transform", "none", "important");
+      chest.style.setProperty("transform", "translateX(-50%) scale(1)", "important");
       chest.style.setProperty("transform-origin", "top center", "important");
 
       intro.classList.add("opened");
@@ -341,32 +343,30 @@ document.addEventListener("DOMContentLoaded", function () {
       social.style.display = "none";
       content.classList.remove("visible", "second");
 
-      // 보석함을 현재 위치에서 위로 올리고 동시에 살짝 작아지게 함
+      // 중앙에서 수평 위치는 그대로 유지하고, 중앙 → 중앙 위쪽으로만 이동합니다.
       requestAnimationFrame(function(){
         const finalTop = window.innerWidth <= 650 ? 55 : 64;
-        const finalLeft = intro.clientWidth / 2;
-        const duration = 1050;
+        const duration = 1250;
         const start = performance.now();
         function ease(t){ return 1 - Math.pow(1 - t, 3); }
         function step(now){
           const t = Math.min(1, (now - start) / duration);
           const e = ease(t);
           const top = startTop + (finalTop - startTop) * e;
-          const left = startLeft + (finalLeft - startLeft) * e;
           const scale = 1 + (0.40 - 1) * e;
           chest.style.setProperty("top", top + "px", "important");
-          chest.style.setProperty("left", left + "px", "important");
+          chest.style.setProperty("left", centerX + "px", "important");
           chest.style.setProperty("transform", "translateX(-50%) scale(" + scale + ")", "important");
           if(t < 1){ requestAnimationFrame(step); }
         }
         requestAnimationFrame(step);
       });
 
-      // 보석함이 위로 올라가는 모션이 충분히 보인 뒤 설명서 등장
+      // 보석함 이동이 끝난 뒤 설명서가 아래에서 위로 등장합니다.
       guideTimer = window.setTimeout(function () {
         content.classList.add("visible");
         guideTimer = null;
-      }, 1100);
+      }, 1300);
     } else if (guideState === 1) {
       guideState = 2;
       title.textContent = "여울 설명서";
@@ -386,4 +386,4 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js?v=92"></script></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js?v=93"></script></body></html>
