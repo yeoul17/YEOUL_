@@ -1,5 +1,5 @@
 <!doctype html><html lang="ko"><head>
-<meta name="version" content="89"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>여울의 보석함</title><meta property="og:type" content="website">
+<meta name="version" content="91"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>여울의 보석함</title><meta property="og:type" content="website">
 <meta property="og:title" content="여울의 보석함">
 <meta property="og:description" content="여울의 캐릭터 아카이브">
 <meta property="og:image" content="https://yeoul17.github.io/YEOUL/share-preview.jpg">
@@ -13,7 +13,7 @@
 <meta name="twitter:description" content="여울의 캐릭터 아카이브">
 <meta name="twitter:image" content="https://yeoul17.github.io/YEOUL/share-preview.jpg">
 <meta name="twitter:image:alt" content="여울의 보석함">
-<link rel="stylesheet" href="style.css?v=90"><style id="v86-final-fix">
+<link rel="stylesheet" href="style.css?v=91"><style id="v86-final-fix">
 /* v85: 실제 문서 흐름을 사용해 작은 창에서도 홈 설명서가 절대 잘리지 않게 함 */
 html, body { overflow-x:hidden !important; }
 @media (min-width:651px) {
@@ -295,6 +295,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (guideTimer) { clearTimeout(guideTimer); guideTimer = null; }
     intro.classList.remove("opened");
     content.classList.remove("visible", "second");
+    document.body.classList.remove("home-guide-open");
+    document.documentElement.classList.remove("home-guide-open");
     title.textContent = "설명서";
     first.style.display = "none";
     second.style.display = "none";
@@ -312,6 +314,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (guideState === 0) {
       guideState = 1;
       intro.classList.add("opened");
+      document.body.classList.add("home-guide-open");
+      document.documentElement.classList.add("home-guide-open");
       title.textContent = "설명서";
       first.style.display = "block";
       second.style.display = "none";
@@ -342,4 +346,4 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js?v=90"></script></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js?v=91"></script></body></html>

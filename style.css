@@ -2483,3 +2483,27 @@ html,body{overflow-x:hidden!important;}
     transform:translateY(22px)!important;
   }
 }
+
+
+/* v91 final: 홈 설명서 상태/애니메이션을 확실하게 연결 */
+@media (min-width:651px){
+  html,body{overflow-x:hidden!important;}
+  html:not(.home-guide-open),body:not(.home-guide-open){overflow:hidden!important;}
+  html.home-guide-open,body.home-guide-open{overflow-y:auto!important;overflow-x:hidden!important;}
+  #home .home-intro:not(.opened){height:100vh!important;min-height:100vh!important;overflow:hidden!important;}
+  #home .home-intro.opened{height:235px!important;min-height:235px!important;overflow:visible!important;}
+  #home .home-content{display:block!important;position:relative!important;width:min(900px,92%)!important;margin:0 auto!important;height:auto!important;max-height:none!important;overflow:visible!important;opacity:0!important;visibility:hidden!important;transform:translateY(85px)!important;}
+  #home .home-content.visible{opacity:1!important;visibility:visible!important;animation:v91GuideRise 1.35s cubic-bezier(.18,.72,.22,1) both!important;}
+  @keyframes v91GuideRise{
+    0%{opacity:0;transform:translateY(85px)!important;}
+    25%{opacity:.12;transform:translateY(68px)!important;}
+    60%{opacity:.72;transform:translateY(30px)!important;}
+    82%{opacity:.94;transform:translateY(9px)!important;}
+    100%{opacity:1;transform:translateY(0)!important;}
+  }
+}
+@media (max-width:650px){
+  #home .home-intro.opened{height:285px!important;min-height:285px!important;overflow:visible!important;}
+  #home .home-content{display:block!important;position:relative!important;width:100%!important;max-width:100%!important;margin:0!important;opacity:1!important;visibility:visible!important;transform:none!important;}
+  #home .home-content h2{margin:8px 0 14px!important;}
+}
