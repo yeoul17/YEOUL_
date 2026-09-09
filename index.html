@@ -294,6 +294,12 @@ document.addEventListener("DOMContentLoaded", function () {
     guideState = 0;
     if (guideTimer) { clearTimeout(guideTimer); guideTimer = null; }
     intro.classList.remove("opened");
+    chest.style.removeProperty("position");
+    chest.style.removeProperty("top");
+    chest.style.removeProperty("left");
+    chest.style.removeProperty("margin");
+    chest.style.removeProperty("transform");
+    chest.style.removeProperty("transform-origin");
     content.classList.remove("visible", "second");
     document.body.classList.remove("home-guide-open");
     document.documentElement.classList.remove("home-guide-open");
@@ -313,6 +319,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (guideState === 0) {
       guideState = 1;
+
+      // 보석함이 현재 위치에서 시작해 위쪽의 작은 위치까지 실제로 이동하도록 FLIP 방식으로 애니메이션
+      const startRect = chest.getBoundingClientRect();
+      const introRect = intro.getBoundingClientRect();
+      const startTop = startRect.top - introRect.top;
+      const startLeft = startRect.left - introRect.left;
+      chest.style.setProperty("position", "absolute", "important");
+      chest.style.setProperty("top", startTop + "px", "important");
+      chest.style.setProperty("left", startLeft + "px", "important");
+      chest.style.setProperty("margin", "0", "important");
+      chest.style.setProperty("transform", "none", "important");
+      chest.style.setProperty("transform-origin", "top center", "important");
+
       intro.classList.add("opened");
       document.body.classList.add("home-guide-open");
       document.documentElement.classList.add("home-guide-open");
@@ -322,11 +341,32 @@ document.addEventListener("DOMContentLoaded", function () {
       social.style.display = "none";
       content.classList.remove("visible", "second");
 
-      // 보석함이 먼저 위로 올라간 뒤 설명서가 나타남
+      // 보석함을 현재 위치에서 위로 올리고 동시에 살짝 작아지게 함
+      requestAnimationFrame(function(){
+        const finalTop = window.innerWidth <= 650 ? 55 : 64;
+        const finalLeft = intro.clientWidth / 2;
+        const duration = 1050;
+        const start = performance.now();
+        function ease(t){ return 1 - Math.pow(1 - t, 3); }
+        function step(now){
+          const t = Math.min(1, (now - start) / duration);
+          const e = ease(t);
+          const top = startTop + (finalTop - startTop) * e;
+          const left = startLeft + (finalLeft - startLeft) * e;
+          const scale = 1 + (0.40 - 1) * e;
+          chest.style.setProperty("top", top + "px", "important");
+          chest.style.setProperty("left", left + "px", "important");
+          chest.style.setProperty("transform", "translateX(-50%) scale(" + scale + ")", "important");
+          if(t < 1){ requestAnimationFrame(step); }
+        }
+        requestAnimationFrame(step);
+      });
+
+      // 보석함이 위로 올라가는 모션이 충분히 보인 뒤 설명서 등장
       guideTimer = window.setTimeout(function () {
         content.classList.add("visible");
         guideTimer = null;
-      }, 500);
+      }, 1100);
     } else if (guideState === 1) {
       guideState = 2;
       title.textContent = "여울 설명서";
@@ -346,4 +386,4 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js?v=91"></script></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js?v=92"></script></body></html>
