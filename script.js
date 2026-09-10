@@ -12,7 +12,7 @@ const C=names.map((name,i)=>({
   id:i+1,
   name,
   description:profiles[name]??profileTemplate,
-  images:i===0?["images/characters/choi-hyeram.jpg"]:i===1?["images/characters/seol-yejun.jpg"]:i===2?["images/characters/seon-ajin.jpg"]:i===3?["images/characters/ryu-jaewon.jpg"]:[]
+  images:i===0?["images/characters/choi-hyeram.jpg"]:i===1?["images/characters/seol-yejun.jpg"]:i===2?["images/characters/seon-ajin.jpg"]:i===3?["images/characters/ryu-jaewon.jpg"]:i===4?["images/characters/mio-baeseowoo.png"]:i===5?["images/characters/suina-momoka.png"]:i===6?["images/characters/baek-eunha.png"]:i===7?["images/characters/beom-seola.png"]:[]
 }));let page=1,current=null;const per=10;const grid=document.querySelector('#grid');
 
 // Supabase 설정이 아직 입력되지 않은 경우를 위한 안전장치
