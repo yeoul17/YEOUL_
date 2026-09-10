@@ -195,7 +195,6 @@ html, body { overflow-x:hidden !important; }
 <main><section id="home" class="page active">
 <div class="home">
   <div id="homeIntro" class="home-intro">
-    <div id="homeMainTitle" class="home-title">여울의 보석함</div>
     <button id="chestButton" class="chest-button ornate-chest" aria-label="여울의 보석함 열기">
       <span class="chest-spark s1">✦</span><span class="chest-spark s2">✧</span><span class="chest-halo"></span>
       <span class="ornate-lid"><span class="ornate-frame"></span><span class="ornate-flower">✿</span><span class="ornate-vine left">❧</span><span class="ornate-vine right">❧</span></span>
@@ -305,15 +304,6 @@ document.addEventListener("DOMContentLoaded", function () {
     chest.style.removeProperty("margin");
     chest.style.removeProperty("transform");
     chest.style.removeProperty("transform-origin");
-    const mainTitle = document.getElementById("homeMainTitle");
-    if(mainTitle){
-      mainTitle.style.removeProperty("position");
-      mainTitle.style.removeProperty("top");
-      mainTitle.style.removeProperty("left");
-      mainTitle.style.removeProperty("margin");
-      mainTitle.style.removeProperty("transform");
-      mainTitle.style.removeProperty("z-index");
-    }
     content.classList.remove("visible", "second");
     document.body.classList.remove("home-guide-open");
     document.documentElement.classList.remove("home-guide-open");
@@ -334,31 +324,18 @@ document.addEventListener("DOMContentLoaded", function () {
     if (guideState === 0) {
       guideState = 1;
 
-      // 현재 중앙 위치를 저장한 뒤, 제목과 보석함을 함께 열린 위치로 FLIP 이동합니다.
+      // 보석함만 중앙에서 위쪽으로 이동합니다.
       const startChest = chest.getBoundingClientRect();
-      const startTitle = document.getElementById("homeMainTitle").getBoundingClientRect();
       const introRect = intro.getBoundingClientRect();
-      const mainTitle = document.getElementById("homeMainTitle");
-
       const chestStartTop = startChest.top - introRect.top;
       const chestCenterX = startChest.left - introRect.left + startChest.width / 2;
-      const titleStartTop = startTitle.top - introRect.top;
-      const titleCenterX = startTitle.left - introRect.left + startTitle.width / 2;
 
-      // 열린 상태의 레이아웃을 먼저 적용하되, 요소는 시작 위치에 고정합니다.
       chest.style.setProperty("position", "absolute", "important");
       chest.style.setProperty("top", chestStartTop + "px", "important");
       chest.style.setProperty("left", chestCenterX + "px", "important");
       chest.style.setProperty("margin", "0", "important");
       chest.style.setProperty("transform", "translateX(-50%) scale(1)", "important");
       chest.style.setProperty("transform-origin", "top center", "important");
-
-      mainTitle.style.setProperty("position", "absolute", "important");
-      mainTitle.style.setProperty("top", titleStartTop + "px", "important");
-      mainTitle.style.setProperty("left", titleCenterX + "px", "important");
-      mainTitle.style.setProperty("margin", "0", "important");
-      mainTitle.style.setProperty("transform", "translateX(-50%)", "important");
-      mainTitle.style.setProperty("z-index", "2", "important");
 
       intro.classList.add("opened");
       document.body.classList.add("home-guide-open");
@@ -372,8 +349,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       requestAnimationFrame(function(){
         const finalTop = window.innerWidth <= 650 ? 55 : 64;
-        const finalTitleTop = window.innerWidth <= 650 ? 10 : 12;
-        const duration = 1250;
+                const duration = 1250;
         const start = performance.now();
 
         function ease(t){ return 1 - Math.pow(1 - t, 3); }
@@ -384,15 +360,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
           const chestTop = chestStartTop + (finalTop - chestStartTop) * e;
           const chestScale = 1 + (0.40 - 1) * e;
-          const titleTop = titleStartTop + (finalTitleTop - titleStartTop) * e;
 
           chest.style.setProperty("top", chestTop + "px", "important");
           chest.style.setProperty("left", (intro.clientWidth / 2) + "px", "important");
           chest.style.setProperty("transform", "translateX(-50%) scale(" + chestScale + ")", "important");
-
-          mainTitle.style.setProperty("top", titleTop + "px", "important");
-          mainTitle.style.setProperty("left", (intro.clientWidth / 2) + "px", "important");
-          mainTitle.style.setProperty("transform", "translateX(-50%)", "important");
 
           if(t < 1){
             requestAnimationFrame(step);
@@ -401,7 +372,7 @@ document.addEventListener("DOMContentLoaded", function () {
         requestAnimationFrame(step);
       });
 
-      // 보석함 + 제목 이동이 끝난 뒤 설명서가 아래에서 위로 등장합니다.
+      // 보석함 이동이 끝난 뒤 설명서가 아래에서 위로 등장합니다.
       guideTimer = window.setTimeout(function () {
         content.classList.add("visible");
         guideTimer = null;
