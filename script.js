@@ -99,11 +99,6 @@ async function toggleLike(){if(current)await toggleCardLike(current.id)}
 
 let previewScrollY=0;
 function openPreview(id){
-  if(!user){
-    const go=confirm('캐릭터를 보려면 먼저 로그인해주세요.\n\n[확인] 로그인 페이지로 이동\n[취소] 그대로 있기');
-    if(go)show('login');
-    return;
-  }
   previewScrollY=window.scrollY||document.documentElement.scrollTop||0;current=C.find(x=>x.id===id);document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));const selected=[...document.querySelectorAll('.card')].find(c=>c.querySelector('.num')?.textContent===String(current.id).padStart(2,'0'));if(selected)selected.classList.add('selected');const previewInner=document.querySelector('#preview .preview-inner');const previewDesc=document.querySelector('#previewDesc');if(previewInner){previewInner.scrollTop=0;previewInner.scrollLeft=0;}if(previewDesc){previewDesc.scrollTop=0;previewDesc.scrollLeft=0;}document.querySelector('#previewName').textContent=current.name;document.querySelector('#previewDesc').innerHTML=current.description.split('\n').map(line=>{const parts=line.split(' : ');return parts.length>1?`<span class="info-line"><b>${parts.shift()} :</b> ${parts.join(' : ')}</span>`:`<span class="info-line intro-line">${line}</span>`}).join('');renderPreviewImage();document.querySelector('#preview').classList.add('open');if(previewInner){previewInner.scrollTop=0;previewInner.scrollLeft=0;}document.body.classList.add('preview-open');document.documentElement.classList.add('preview-open');document.body.style.overflow='hidden'}
 function closePreview(){document.querySelector('#preview').classList.remove('open');document.body.classList.remove('preview-open');document.documentElement.classList.remove('preview-open');document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));document.body.style.overflow='';requestAnimationFrame(()=>window.scrollTo(0,previewScrollY))}
 document.querySelector('#previewClose').onclick=closePreview;
