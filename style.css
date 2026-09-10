@@ -2432,7 +2432,7 @@ html,body{overflow-x:hidden!important;}
 }
 
 
-/* v95 — 홈 설명서 표시/스크롤 상태를 실제 동작과 연결 */
+/* v96 — 홈 설명서 표시/스크롤 상태를 실제 동작과 연결 */
 @media (min-width:651px){
   html, body{overflow-x:hidden!important;}
   html:not(.home-guide-open), body:not(.home-guide-open){overflow-y:hidden!important;}
@@ -2447,7 +2447,7 @@ html,body{overflow-x:hidden!important;}
   to{opacity:1;transform:translate3d(0,0,0)!important;}
 }
 
-/* v95 — 모바일 홈: 보석함 제목/보석함과 설명서 제목을 완전히 분리 */
+/* v96 — 모바일 홈: 보석함 제목/보석함과 설명서 제목을 완전히 분리 */
 @media (max-width:650px){
   #home .home-intro.opened{
     height:235px!important;min-height:235px!important;
@@ -2485,7 +2485,7 @@ html,body{overflow-x:hidden!important;}
 }
 
 
-/* v95 final: 홈 설명서 상태/애니메이션을 확실하게 연결 */
+/* v96 final: 홈 설명서 상태/애니메이션을 확실하게 연결 */
 @media (min-width:651px){
   html,body{overflow-x:hidden!important;}
   html:not(.home-guide-open),body:not(.home-guide-open){overflow:hidden!important;}
