@@ -365,3 +365,21 @@ show=function(id){
 };
 
 document.querySelector('#masterRefresh')?.addEventListener('click',loadMasterLikes);
+
+/* v97 fallback: synchronize home title with chest movement */
+document.addEventListener('DOMContentLoaded',()=>{
+  const chest=document.querySelector('#chest, .chest, .chest-art, [data-chest]');
+  const homeTitle=document.querySelector('.home-chest-title');
+  if(chest && homeTitle && !chest.dataset.v97Sync){
+    chest.dataset.v97Sync='1';
+    chest.addEventListener('click',()=>homeTitle.classList.add('home-title-moving'));
+  }
+});
+
+/* v97: 홈으로 돌아오면 제목 이동 상태도 초기화 */
+document.addEventListener('click',(e)=>{
+  const btn=e.target.closest('[data-page="home"]');
+  if(!btn) return;
+  const t=document.querySelector('.home-chest-title');
+  if(t) t.classList.remove('home-title-moving');
+});

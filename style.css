@@ -2507,3 +2507,19 @@ html,body{overflow-x:hidden!important;}
   #home .home-content{display:block!important;position:relative!important;width:100%!important;max-width:100%!important;margin:0!important;opacity:1!important;visibility:visible!important;transform:none!important;}
   #home .home-content h2{margin:8px 0 14px!important;}
 }
+
+
+/* v97: 홈 제목 + 보석함 동시 중앙→중앙위 이동 */
+.home-chest-title{
+  will-change: transform, opacity;
+  transform: translate3d(0,0,0);
+  transition: transform 1.25s cubic-bezier(.22,.75,.2,1), opacity .35s ease;
+}
+.home-chest-title.home-title-moving{
+  transform: translate3d(0,-175px,0) !important;
+}
+@media (max-width: 700px){
+  .home-chest-title.home-title-moving{
+    transform: translate3d(0,-105px,0) !important;
+  }
+}
