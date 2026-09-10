@@ -6,10 +6,11 @@
 <meta property="og:description" content="여울의 캐릭터 아카이브">
 <meta property="og:url" content="https://yeoul17.github.io/YEOUL/">
 <meta property="og:image" content="https://yeoul17.github.io/YEOUL/share-preview.jpg">
+<link rel="image_src" href="https://yeoul17.github.io/YEOUL/share-preview.jpg">
 <meta property="og:image:url" content="https://yeoul17.github.io/YEOUL/share-preview.jpg">
 <meta property="og:image:secure_url" content="https://yeoul17.github.io/YEOUL/share-preview.jpg">
-<meta property="og:image:width" content="1536">
-<meta property="og:image:height" content="1024">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:alt" content="여울의 보석함">
 <meta name="twitter:card" content="summary_large_image">
@@ -17,7 +18,7 @@
 <meta name="twitter:description" content="여울의 캐릭터 아카이브">
 <meta name="twitter:image" content="https://yeoul17.github.io/YEOUL/share-preview.jpg">
 <meta name="twitter:image:alt" content="여울의 보석함">
-<link rel="stylesheet" href="style.css?v=97"><style id="v86-final-fix">
+<link rel="stylesheet" href="style.css?v=98"><style id="v86-final-fix">
 /* v85: 실제 문서 흐름을 사용해 작은 창에서도 홈 설명서가 절대 잘리지 않게 함 */
 html, body { overflow-x:hidden !important; }
 @media (min-width:651px) {
@@ -194,7 +195,7 @@ html, body { overflow-x:hidden !important; }
 <main><section id="home" class="page active">
 <div class="home">
   <div id="homeIntro" class="home-intro">
-    <div class="home-title">여울의 보석함</div>
+    <div id="homeMainTitle" class="home-title">여울의 보석함</div>
     <button id="chestButton" class="chest-button ornate-chest" aria-label="여울의 보석함 열기">
       <span class="chest-spark s1">✦</span><span class="chest-spark s2">✧</span><span class="chest-halo"></span>
       <span class="ornate-lid"><span class="ornate-frame"></span><span class="ornate-flower">✿</span><span class="ornate-vine left">❧</span><span class="ornate-vine right">❧</span></span>
@@ -304,6 +305,15 @@ document.addEventListener("DOMContentLoaded", function () {
     chest.style.removeProperty("margin");
     chest.style.removeProperty("transform");
     chest.style.removeProperty("transform-origin");
+    const mainTitle = document.getElementById("homeMainTitle");
+    if(mainTitle){
+      mainTitle.style.removeProperty("position");
+      mainTitle.style.removeProperty("top");
+      mainTitle.style.removeProperty("left");
+      mainTitle.style.removeProperty("margin");
+      mainTitle.style.removeProperty("transform");
+      mainTitle.style.removeProperty("z-index");
+    }
     content.classList.remove("visible", "second");
     document.body.classList.remove("home-guide-open");
     document.documentElement.classList.remove("home-guide-open");
@@ -324,53 +334,78 @@ document.addEventListener("DOMContentLoaded", function () {
     if (guideState === 0) {
       guideState = 1;
 
-      // 보석함이 현재 위치에서 시작해 위쪽의 작은 위치까지 실제로 이동하도록 FLIP 방식으로 애니메이션
-      const startRect = chest.getBoundingClientRect();
+      // 현재 중앙 위치를 저장한 뒤, 제목과 보석함을 함께 열린 위치로 FLIP 이동합니다.
+      const startChest = chest.getBoundingClientRect();
+      const startTitle = document.getElementById("homeMainTitle").getBoundingClientRect();
       const introRect = intro.getBoundingClientRect();
-      // 시작점은 보석함의 "중심점"으로 잡아 수평 이동을 0으로 고정합니다.
-      const startTop = startRect.top - introRect.top;
-      const startCenterX = startRect.left - introRect.left + (startRect.width / 2);
-      const centerX = intro.clientWidth / 2;
+      const mainTitle = document.getElementById("homeMainTitle");
+
+      const chestStartTop = startChest.top - introRect.top;
+      const chestCenterX = startChest.left - introRect.left + startChest.width / 2;
+      const titleStartTop = startTitle.top - introRect.top;
+      const titleCenterX = startTitle.left - introRect.left + startTitle.width / 2;
+
+      // 열린 상태의 레이아웃을 먼저 적용하되, 요소는 시작 위치에 고정합니다.
       chest.style.setProperty("position", "absolute", "important");
-      chest.style.setProperty("top", startTop + "px", "important");
-      chest.style.setProperty("left", startCenterX + "px", "important");
+      chest.style.setProperty("top", chestStartTop + "px", "important");
+      chest.style.setProperty("left", chestCenterX + "px", "important");
       chest.style.setProperty("margin", "0", "important");
       chest.style.setProperty("transform", "translateX(-50%) scale(1)", "important");
       chest.style.setProperty("transform-origin", "top center", "important");
 
+      mainTitle.style.setProperty("position", "absolute", "important");
+      mainTitle.style.setProperty("top", titleStartTop + "px", "important");
+      mainTitle.style.setProperty("left", titleCenterX + "px", "important");
+      mainTitle.style.setProperty("margin", "0", "important");
+      mainTitle.style.setProperty("transform", "translateX(-50%)", "important");
+      mainTitle.style.setProperty("z-index", "2", "important");
+
       intro.classList.add("opened");
       document.body.classList.add("home-guide-open");
       document.documentElement.classList.add("home-guide-open");
+
       title.textContent = "설명서";
       first.style.display = "block";
       second.style.display = "none";
       social.style.display = "none";
       content.classList.remove("visible", "second");
 
-      // 중앙에서 수평 위치는 그대로 유지하고, 중앙 → 중앙 위쪽으로만 이동합니다.
       requestAnimationFrame(function(){
         const finalTop = window.innerWidth <= 650 ? 55 : 64;
+        const finalTitleTop = window.innerWidth <= 650 ? 10 : 12;
         const duration = 1250;
         const start = performance.now();
+
         function ease(t){ return 1 - Math.pow(1 - t, 3); }
+
         function step(now){
           const t = Math.min(1, (now - start) / duration);
           const e = ease(t);
-          const top = startTop + (finalTop - startTop) * e;
-          const scale = 1 + (0.40 - 1) * e;
-          chest.style.setProperty("top", top + "px", "important");
-          chest.style.setProperty("left", centerX + "px", "important");
-          chest.style.setProperty("transform", "translateX(-50%) scale(" + scale + ")", "important");
-          if(t < 1){ requestAnimationFrame(step); }
+
+          const chestTop = chestStartTop + (finalTop - chestStartTop) * e;
+          const chestScale = 1 + (0.40 - 1) * e;
+          const titleTop = titleStartTop + (finalTitleTop - titleStartTop) * e;
+
+          chest.style.setProperty("top", chestTop + "px", "important");
+          chest.style.setProperty("left", (intro.clientWidth / 2) + "px", "important");
+          chest.style.setProperty("transform", "translateX(-50%) scale(" + chestScale + ")", "important");
+
+          mainTitle.style.setProperty("top", titleTop + "px", "important");
+          mainTitle.style.setProperty("left", (intro.clientWidth / 2) + "px", "important");
+          mainTitle.style.setProperty("transform", "translateX(-50%)", "important");
+
+          if(t < 1){
+            requestAnimationFrame(step);
+          }
         }
         requestAnimationFrame(step);
       });
 
-      // 보석함 이동이 끝난 뒤 설명서가 아래에서 위로 등장합니다.
+      // 보석함 + 제목 이동이 끝난 뒤 설명서가 아래에서 위로 등장합니다.
       guideTimer = window.setTimeout(function () {
         content.classList.add("visible");
         guideTimer = null;
-      }, 1300);
+      }, 1380);
     } else if (guideState === 1) {
       guideState = 2;
       title.textContent = "여울 설명서";
@@ -390,4 +425,4 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js?v=97"></script></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js?v=98"></script></body></html>
