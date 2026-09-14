@@ -2523,3 +2523,26 @@ html,body{overflow-x:hidden!important;}
     transform: translate3d(0,-105px,0) !important;
   }
 }
+
+/* v102 — 모바일 설명서 SNS 4개를 한 줄에 표시 */
+@media(max-width:650px){
+  #home .home-content.second .social{
+    flex-wrap:nowrap !important;
+    width:100% !important;
+    max-width:320px !important;
+    gap:6px !important;
+    justify-content:center !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+  }
+  #home .home-content.second .social a,
+  #home .home-content.second .social .band-link{
+    flex:0 0 74px !important;
+    width:74px !important;
+    min-width:74px !important;
+    height:68px !important;
+  }
+  #home .home-content.second .social a{font-size:20px !important;}
+  #home .home-content.second .social a small{font-size:9px !important;}
+  #home .home-content.second .social .band-icon{width:27px !important;height:27px !important;}
+}
