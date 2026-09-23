@@ -2572,3 +2572,9 @@ body:has(#characters.active){
 #characters.active .character-grid{
   overflow: visible !important;
 }
+
+/* 여울's Pick - 사용자가 올린 원본 사진 */
+#pick .pick-photo-wrap{width:min(820px,92%);margin:24px auto 0;text-align:center;}
+#pick .pick-photo{display:block;width:100%;height:auto;max-height:68vh;object-fit:contain;margin:0 auto;border-radius:0;}
+#pick .pick-credit{margin-top:8px;font-size:11px;color:#999;text-align:right;}
+@media(max-width:650px){#pick .pick-photo-wrap{width:100%;margin-top:18px;}#pick .pick-photo{max-height:none;}#pick .pick-credit{font-size:10px;margin-top:6px;padding-right:3px;}}
