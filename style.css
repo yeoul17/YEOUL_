@@ -2613,7 +2613,7 @@ body:has(#characters.active){
   padding:8px 8px 8px 2px;
 }
 #pick .pick-credit{
-  font-size:13px;
+  font-size:16px;
   color:#777;
   text-align:left;
   margin:4px 0 18px;
