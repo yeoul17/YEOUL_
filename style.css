@@ -2557,3 +2557,18 @@ html,body{overflow-x:hidden!important;}
   font-weight: 400;
   letter-spacing: .2px;
 }
+
+/* Characters 페이지 스크롤 보정 */
+html:has(#characters.active),
+body:has(#characters.active){
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+#characters.active{
+  min-height: 100vh;
+  height: auto !important;
+  overflow: visible !important;
+}
+#characters.active .character-grid{
+  overflow: visible !important;
+}
