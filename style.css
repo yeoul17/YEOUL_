@@ -2573,8 +2573,71 @@ body:has(#characters.active){
   overflow: visible !important;
 }
 
-/* 여울's Pick - 사용자가 올린 원본 사진 */
-#pick .pick-photo-wrap{width:min(820px,92%);margin:24px auto 0;text-align:center;}
-#pick .pick-photo{display:block;width:100%;height:auto;max-height:68vh;object-fit:contain;margin:0 auto;border-radius:0;}
-#pick .pick-credit{margin-top:8px;font-size:11px;color:#999;text-align:right;}
-@media(max-width:650px){#pick .pick-photo-wrap{width:100%;margin-top:18px;}#pick .pick-photo{max-height:none;}#pick .pick-credit{font-size:10px;margin-top:6px;padding-right:3px;}}
+/* 여울's Pick - 캐릭터 페이지와 같은 둥근 카드 구성 */
+#pick .pick-card{
+  width:min(900px,92%);
+  margin:28px auto 40px;
+  padding:22px;
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(220px,.85fr);
+  gap:28px;
+  align-items:stretch;
+  background:rgba(255,250,252,.96);
+  border:1px solid rgba(184,164,196,.28);
+  border-radius:22px;
+  box-shadow:0 10px 30px rgba(150,125,160,.08);
+  box-sizing:border-box;
+}
+#pick .pick-photo-wrap{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border-radius:16px;
+  background:#fff;
+}
+#pick .pick-photo{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:68vh;
+  object-fit:contain;
+  margin:0;
+  border-radius:16px;
+}
+#pick .pick-info{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  padding:8px 8px 8px 2px;
+}
+#pick .pick-credit{
+  font-size:13px;
+  color:#777;
+  text-align:left;
+  margin:4px 0 18px;
+  font-weight:500;
+}
+#pick .pick-description{
+  flex:1;
+  min-height:220px;
+  border-top:1px solid rgba(184,164,196,.22);
+  padding-top:18px;
+}
+@media(max-width:650px){
+  #pick .pick-card{
+    width:92%;
+    margin:20px auto 32px;
+    padding:14px;
+    grid-template-columns:1fr;
+    gap:16px;
+    border-radius:18px;
+  }
+  #pick .pick-photo-wrap,
+  #pick .pick-photo{border-radius:13px;}
+  #pick .pick-photo{max-height:none;}
+  #pick .pick-info{padding:2px 4px 6px;}
+  #pick .pick-credit{font-size:11px;margin:2px 0 12px;}
+  #pick .pick-description{min-height:140px;padding-top:12px;}
+}
