@@ -2547,14 +2547,13 @@ html,body{overflow-x:hidden!important;}
   #home .home-content.second .social .band-icon{width:27px !important;height:27px !important;}
 }
 
-
-.character-credit{
-  margin-top:-8px;
-  margin-bottom:18px;
-  text-align:center;
-  font-size:11px;
-  line-height:1.2;
-  color:#999;
-  font-weight:400;
-  letter-spacing:.2px;
+/* Characters 제목 아래 크레딧 */
+#characters .character-credit{
+  margin-top: -8px;
+  margin-bottom: 14px;
+  font-size: 11px;
+  line-height: 1.2;
+  color: #999;
+  font-weight: 400;
+  letter-spacing: .2px;
 }
