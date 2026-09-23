@@ -2617,7 +2617,7 @@ body:has(#characters.active){
   color:#777;
   text-align:left;
   margin:4px 0 18px;
-  font-weight:500;
+  font-weight:700;
 }
 #pick .pick-description{
   flex:1;
