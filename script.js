@@ -115,6 +115,114 @@ function closePreview(){document.querySelector('#preview').classList.remove('ope
 document.querySelector('#previewClose').onclick=closePreview;
 function goToCharacterPage(nextPage){const total=Math.ceil(C.length/per);page=Math.max(1,Math.min(nextPage,total));render();requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));}
 document.querySelector('#prev').onclick=()=>goToCharacterPage(page-1);document.querySelector('#next').onclick=()=>goToCharacterPage(page+1);document.querySelectorAll('[data-page]').forEach(b=>{b.addEventListener('click',e=>{e.preventDefault();show(b.dataset.page);});});
+/* 여울's Pick: 최신 항목을 배열의 맨 앞에 두고 옆으로 넘겨봅니다. */
+const PICK_ITEMS=[
+  {id:'pick-01',image:'images/pick-01.jpg',credit:'듀품닮님CM',description:''}
+];
+let pickIndex=0;
+let pickPublicComments=[];
+let pickPrivateComments=[];
+
+function currentPick(){return PICK_ITEMS[pickIndex]||PICK_ITEMS[0];}
+
+function renderPick(){
+  const item=currentPick();
+  if(!item)return;
+  const photo=document.querySelector('#pickPhoto');
+  const credit=document.querySelector('#pickCredit');
+  const desc=document.querySelector('#pickDescriptionText');
+  const label=document.querySelector('#pickLabel');
+  const dots=document.querySelector('#pickDots');
+  if(photo){photo.src=item.image;photo.alt="여울's Pick";}
+  if(credit)credit.textContent=item.credit||'';
+  if(desc)desc.textContent=item.description||'';
+  if(label)label.textContent=`${pickIndex+1} / ${PICK_ITEMS.length}`;
+  if(dots)dots.innerHTML=PICK_ITEMS.map((_,i)=>`<button class="pick-dot ${i===pickIndex?'active':''}" data-pick-index="${i}" aria-label="${i+1}번째 Pick"></button>`).join('');
+  document.querySelector('#pickPrev')?.toggleAttribute('hidden',PICK_ITEMS.length<=1);
+  document.querySelector('#pickNext')?.toggleAttribute('hidden',PICK_ITEMS.length<=1);
+  loadPickComments();
+}
+
+function renderPickComments(){
+  const box=document.querySelector('#pickComments');
+  if(!box)return;
+  const isOwner=(r)=>user&&r.user_id===user.id;
+  const isMaster=!!profile?.is_master;
+  box.innerHTML='';
+  const publicRows=pickPublicComments.filter(r=>r.pick_id===currentPick().id);
+  if(!publicRows.length){
+    box.innerHTML='<div class="pick-comment">아직 댓글이 없어요.</div>';
+    return;
+  }
+  publicRows.forEach(r=>{
+    const privateRow=pickPrivateComments.find(x=>x.id===r.id);
+    const canSee=!!privateRow&&(isOwner(privateRow)||isMaster);
+    const div=document.createElement('div');
+    div.className='pick-comment';
+    div.innerHTML=`<div class="comment-author">${escapeHtml(r.nickname||'익명')}님의 답글입니다</div>${canSee?`<div class="comment-private">${escapeHtml(privateRow.content||'')}</div>`:''}`;
+    box.appendChild(div);
+  });
+}
+
+function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+
+async function loadPickComments(){
+  if(!sb){
+    pickPublicComments=[];pickPrivateComments=[];renderPickComments();return;
+  }
+  const pid=currentPick().id;
+  const {data:pub,error:pubErr}=await sb.from('pick_comment_public').select('id,pick_id,nickname,created_at').eq('pick_id',pid).order('created_at',{ascending:true});
+  if(pubErr){console.error('pick public comments error',pubErr);pickPublicComments=[];}
+  else pickPublicComments=pub||[];
+  pickPrivateComments=[];
+  if(user){
+    let q=sb.from('pick_comments').select('id,pick_id,user_id,content,created_at').eq('pick_id',pid).order('created_at',{ascending:true});
+    if(!profile?.is_master)q=q.eq('user_id',user.id);
+    const {data:priv,error}=await q;
+    if(!error)pickPrivateComments=priv||[];
+  }
+  renderPickComments();
+}
+
+async function submitPickComment(){
+  if(!user){
+    const go=confirm('댓글을 남기려면 먼저 로그인해주세요.\\n\\n[확인] 로그인 페이지로 이동');
+    if(go){show('login');setLoginMode('login');document.querySelector('#loginEmail')?.focus();}
+    return;
+  }
+  if(!profile){
+    openProfile();
+    popup('프로필이 필요해요','댓글을 남기려면 먼저 프로필 닉네임을 만들어주세요.');
+    return;
+  }
+  const input=document.querySelector('#pickCommentInput');
+  const content=input?.value.trim()||'';
+  if(!content)return alert('댓글 내용을 입력해주세요.');
+  const btn=document.querySelector('#pickCommentSubmit');
+  if(btn){btn.disabled=true;btn.textContent='등록 중...';}
+  const {error}=await sb.from('pick_comments').insert({
+    pick_id:currentPick().id,user_id:user.id,content
+  });
+  if(btn){btn.disabled=false;btn.textContent='등록';}
+  if(error)return alert('댓글 등록에 실패했어요: '+error.message);
+  if(input)input.value='';
+  await loadPickComments();
+}
+
+document.querySelector('#pickPrev')?.addEventListener('click',()=>{
+  if(PICK_ITEMS.length<2)return;
+  pickIndex=(pickIndex-1+PICK_ITEMS.length)%PICK_ITEMS.length;renderPick();
+});
+document.querySelector('#pickNext')?.addEventListener('click',()=>{
+  if(PICK_ITEMS.length<2)return;
+  pickIndex=(pickIndex+1)%PICK_ITEMS.length;renderPick();
+});
+document.querySelector('#pickDots')?.addEventListener('click',e=>{
+  const b=e.target.closest('.pick-dot');if(!b)return;
+  pickIndex=Number(b.dataset.pickIndex)||0;renderPick();
+});
+document.querySelector('#pickCommentSubmit')?.addEventListener('click',submitPickComment);
+
 function show(id){
   closePreview();
   closeProfile();
@@ -131,7 +239,7 @@ function show(id){
   document.querySelectorAll('[data-page]').forEach(n=>n.classList.toggle('active',n.dataset.page===id));
   document.querySelector('#profileNav')?.classList.remove('active');
   if(id==='home'){document.body.classList.remove('home-guide-open');document.documentElement.classList.remove('home-guide-open');}
-  if(id==='characters'){page=1;render();window.scrollTo(0,0);}
+  if(id==='characters'){page=1;render();window.scrollTo(0,0);} if(id==='pick'){renderPick();}
   refreshProfileUI();
   requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
 }
@@ -296,7 +404,7 @@ if(sb){
   sb.auth.onAuthStateChange((event,session)=>{
     user=session?.user||null;
     setTimeout(async()=>{
-      try{await loadProfileAndLikes();}catch(e){console.error('profile load error',e);refreshProfileUI();}
+      try{await loadProfileAndLikes();}catch(e){console.error('profile load error',e);refreshProfileUI();} try{await loadPickComments();}catch(e){console.error('pick comment load error',e);}
       if(event==='PASSWORD_RECOVERY'){
         const first=prompt('새 비밀번호를 입력해주세요. (6자 이상)');
         if(first===null)return;
@@ -317,7 +425,7 @@ if(sb){
     try{await loadProfileAndLikes();}catch(e){console.error('initial profile load error',e);refreshProfileUI();}
   });
 }
-render();refreshProfileUI();if(!user)setLoginMode(loginMode);
+render();refreshProfileUI();renderPick();if(!user)setLoginMode(loginMode);
 
 /* v78 master dashboard */
 async function loadMasterLikes(){

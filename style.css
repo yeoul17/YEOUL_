@@ -2573,13 +2573,13 @@ body:has(#characters.active){
   overflow: visible !important;
 }
 
-/* 여울's Pick - 캐릭터 페이지와 같은 둥근 카드 구성 */
+/* 여울's Pick - 사진 캐러셀 + 댓글 */
 #pick .pick-card{
   width:min(900px,92%);
-  margin:28px auto 40px;
+  margin:28px auto 20px;
   padding:22px;
   display:grid;
-  grid-template-columns:minmax(0,1.15fr) minmax(220px,.85fr);
+  grid-template-columns:minmax(0,1.15fr) minmax(250px,.85fr);
   gap:28px;
   align-items:stretch;
   background:rgba(255,250,252,.96);
@@ -2587,6 +2587,13 @@ body:has(#characters.active){
   border-radius:22px;
   box-shadow:0 10px 30px rgba(150,125,160,.08);
   box-sizing:border-box;
+}
+#pick .pick-photo-side{
+  min-width:0;
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr) 34px;
+  align-items:center;
+  gap:8px;
 }
 #pick .pick-photo-wrap{
   min-width:0;
@@ -2606,6 +2613,12 @@ body:has(#characters.active){
   margin:0;
   border-radius:16px;
 }
+#pick .pick-arrow{
+  width:32px;height:32px;border:0;border-radius:50%;
+  background:rgba(255,255,255,.8);color:#888;
+  cursor:pointer;font-size:17px;line-height:32px;padding:0;
+}
+#pick .pick-arrow:hover{background:#fff;box-shadow:0 4px 12px rgba(120,100,130,.12);}
 #pick .pick-info{
   min-width:0;
   display:flex;
@@ -2621,23 +2634,49 @@ body:has(#characters.active){
 }
 #pick .pick-description{
   flex:1;
-  min-height:220px;
+  min-height:260px;
   border-top:1px solid rgba(184,164,196,.22);
-  padding-top:18px;
+  padding-top:15px;
+  display:flex;
+  flex-direction:column;
 }
+#pick .pick-description-label,
+#pick .pick-comments-title{
+  font-size:12px;color:#aaa;font-weight:600;margin-bottom:8px;
+}
+#pick .pick-description-text{
+  min-height:50px;margin-bottom:16px;color:#666;font-size:13px;line-height:1.7;
+}
+#pick .pick-comments{
+  display:flex;flex-direction:column;gap:7px;
+  max-height:170px;overflow-y:auto;margin-bottom:10px;
+}
+#pick .pick-comment{
+  padding:9px 10px;border-radius:10px;background:rgba(246,242,248,.72);
+  font-size:12px;line-height:1.5;color:#777;
+}
+#pick .pick-comment .comment-author{font-weight:600;color:#777;}
+#pick .pick-comment .comment-private{margin-top:4px;color:#555;white-space:pre-wrap;}
+#pick .pick-comment-form{display:flex;gap:7px;align-items:flex-end;margin-top:auto;}
+#pick .pick-comment-form textarea{
+  flex:1;min-width:0;min-height:42px;max-height:90px;resize:vertical;
+  border:1px solid rgba(184,164,196,.3);border-radius:10px;
+  padding:9px 10px;font:inherit;font-size:12px;background:#fff;box-sizing:border-box;
+}
+#pick .pick-comment-form button{
+  border:0;border-radius:10px;padding:10px 13px;cursor:pointer;
+  background:#eee5f1;color:#6f6374;font-size:12px;
+}
+#pick .pick-dots{display:flex;justify-content:center;gap:7px;margin:0 auto 30px;}
+#pick .pick-dot{width:7px;height:7px;padding:0;border:0;border-radius:50%;background:#d7cedb;cursor:pointer;}
+#pick .pick-dot.active{background:#8f8196;transform:scale(1.25);}
 @media(max-width:650px){
-  #pick .pick-card{
-    width:92%;
-    margin:20px auto 32px;
-    padding:14px;
-    grid-template-columns:1fr;
-    gap:16px;
-    border-radius:18px;
-  }
-  #pick .pick-photo-wrap,
-  #pick .pick-photo{border-radius:13px;}
+  #pick .pick-card{width:92%;margin:20px auto 14px;padding:14px;grid-template-columns:1fr;gap:16px;border-radius:18px;}
+  #pick .pick-photo-side{grid-template-columns:30px minmax(0,1fr) 30px;gap:5px;}
+  #pick .pick-photo-wrap,#pick .pick-photo{border-radius:13px;}
   #pick .pick-photo{max-height:none;}
   #pick .pick-info{padding:2px 4px 6px;}
-  #pick .pick-credit{font-size:11px;margin:2px 0 12px;}
-  #pick .pick-description{min-height:140px;padding-top:12px;}
+  #pick .pick-credit{font-size:16px;margin:2px 0 12px;}
+  #pick .pick-description{min-height:220px;padding-top:12px;}
+  #pick .pick-comments{max-height:150px;}
 }
