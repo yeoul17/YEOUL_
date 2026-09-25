@@ -2640,7 +2640,7 @@ body:has(#characters.active){
   margin:4px 0 18px;
   font-weight:700;
 }
-#pick .pick-description{
+#pick .pick-comments-area{
   flex:1;
   min-height:260px;
   border-top:1px solid rgba(184,164,196,.22);
@@ -2648,16 +2648,12 @@ body:has(#characters.active){
   display:flex;
   flex-direction:column;
 }
-#pick .pick-description-label,
 #pick .pick-comments-title{
   font-size:12px;color:#aaa;font-weight:600;margin-bottom:8px;
 }
-#pick .pick-description-text{
-  min-height:50px;margin-bottom:16px;color:#666;font-size:13px;line-height:1.7;
-}
 #pick .pick-comments{
   display:flex;flex-direction:column;gap:7px;
-  max-height:170px;overflow-y:auto;margin-bottom:10px;
+  max-height:250px;overflow-y:auto;margin-bottom:10px;
 }
 #pick .pick-comment{
   padding:9px 10px;border-radius:10px;background:rgba(246,242,248,.72);
@@ -2686,6 +2682,6 @@ body:has(#characters.active){
   #pick .pick-photo{max-height:none;}
   #pick .pick-info{padding:2px 4px 6px;}
   #pick .pick-credit{font-size:16px;margin:2px 0 12px;}
-  #pick .pick-description{min-height:220px;padding-top:12px;}
-  #pick .pick-comments{max-height:150px;}
+  #pick .pick-comments-area{min-height:220px;padding-top:12px;}
+  #pick .pick-comments{max-height:180px;}
 }

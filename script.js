@@ -130,12 +130,10 @@ function renderPick(){
   if(!item)return;
   const photo=document.querySelector('#pickPhoto');
   const credit=document.querySelector('#pickCredit');
-  const desc=document.querySelector('#pickDescriptionText');
   const label=document.querySelector('#pickLabel');
   const dots=document.querySelector('#pickDots');
   if(photo){photo.src=item.image;photo.alt="여울's Pick";}
   if(credit)credit.textContent=item.credit||'';
-  if(desc)desc.textContent=item.description||'';
   if(label)label.textContent=`${pickIndex+1} / ${PICK_ITEMS.length}`;
   if(dots)dots.innerHTML=PICK_ITEMS.map((_,i)=>`<button class="pick-dot ${i===pickIndex?'active':''}" data-pick-index="${i}" aria-label="${i+1}번째 Pick"></button>`).join('');
   document.querySelector('#pickPrev')?.toggleAttribute('hidden',PICK_ITEMS.length<=1);
