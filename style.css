@@ -2590,12 +2590,13 @@ body:has(#characters.active){
 }
 #pick .pick-photo-side{
   min-width:0;
-  display:grid;
-  grid-template-columns:34px minmax(0,1fr) 34px;
+  position:relative;
+  display:flex;
   align-items:center;
-  gap:8px;
+  justify-content:center;
 }
 #pick .pick-photo-wrap{
+  width:100%;
   min-width:0;
   display:flex;
   align-items:center;
@@ -2614,10 +2615,17 @@ body:has(#characters.active){
   border-radius:16px;
 }
 #pick .pick-arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:2;
   width:32px;height:32px;border:0;border-radius:50%;
-  background:rgba(255,255,255,.8);color:#888;
+  background:rgba(255,255,255,.86);color:#888;
   cursor:pointer;font-size:17px;line-height:32px;padding:0;
+  box-shadow:0 2px 8px rgba(120,100,130,.10);
 }
+#pick #pickPrev{left:10px;}
+#pick #pickNext{right:10px;}
 #pick .pick-arrow:hover{background:#fff;box-shadow:0 4px 12px rgba(120,100,130,.12);}
 #pick .pick-info{
   min-width:0;
@@ -2672,8 +2680,9 @@ body:has(#characters.active){
 #pick .pick-dot.active{background:#8f8196;transform:scale(1.25);}
 @media(max-width:650px){
   #pick .pick-card{width:92%;margin:20px auto 14px;padding:14px;grid-template-columns:1fr;gap:16px;border-radius:18px;}
-  #pick .pick-photo-side{grid-template-columns:30px minmax(0,1fr) 30px;gap:5px;}
   #pick .pick-photo-wrap,#pick .pick-photo{border-radius:13px;}
+  #pick #pickPrev{left:7px;}
+  #pick #pickNext{right:7px;}
   #pick .pick-photo{max-height:none;}
   #pick .pick-info{padding:2px 4px 6px;}
   #pick .pick-credit{font-size:16px;margin:2px 0 12px;}
