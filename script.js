@@ -117,7 +117,7 @@ function goToCharacterPage(nextPage){const total=Math.ceil(C.length/per);page=Ma
 document.querySelector('#prev').onclick=()=>goToCharacterPage(page-1);document.querySelector('#next').onclick=()=>goToCharacterPage(page+1);document.querySelectorAll('[data-page]').forEach(b=>{b.addEventListener('click',e=>{e.preventDefault();show(b.dataset.page);});});
 /* 여울's Pick: 최신 항목을 배열의 맨 앞에 두고 옆으로 넘겨봅니다. */
 const PICK_ITEMS=[
-  {id:'pick-01',image:'images/pick-01.jpg',credit:'듀품닮님CM',description:''}
+  {id:'pick-01',image:'images/pick-01.jpg',credit:'듀품닮님CM',description:'',isNew:true}
 ];
 let pickIndex=0;
 let pickPublicComments=[];
@@ -132,8 +132,10 @@ function renderPick(){
   const credit=document.querySelector('#pickCredit');
   const label=document.querySelector('#pickLabel');
   const dots=document.querySelector('#pickDots');
+  const newBadge=document.querySelector('#pickNewBadge');
   if(photo){photo.src=item.image;photo.alt="여울's Pick";}
   if(credit)credit.textContent=item.credit||'';
+  if(newBadge)newBadge.hidden=!item.isNew;
   if(label)label.textContent=`${pickIndex+1} / ${PICK_ITEMS.length}`;
   if(dots)dots.innerHTML=PICK_ITEMS.map((_,i)=>`<button class="pick-dot ${i===pickIndex?'active':''}" data-pick-index="${i}" aria-label="${i+1}번째 Pick"></button>`).join('');
   document.querySelector('#pickPrev')?.toggleAttribute('hidden',PICK_ITEMS.length<=1);
@@ -152,14 +154,79 @@ function renderPickComments(){
     box.innerHTML='<div class="pick-comment">아직 댓글이 없어요.</div>';
     return;
   }
+  const children=new Map();
   publicRows.forEach(r=>{
+    const key=r.parent_id||0;
+    if(!children.has(key))children.set(key,[]);
+    children.get(key).push(r);
+  });
+  const appendRow=(r,depth=0)=>{
     const privateRow=pickPrivateComments.find(x=>x.id===r.id);
     const canSee=!!privateRow&&(isOwner(privateRow)||isMaster);
     const div=document.createElement('div');
-    div.className='pick-comment';
-    div.innerHTML=`<div class="comment-author">${escapeHtml(r.nickname||'익명')}님의 답글입니다</div>${canSee?`<div class="comment-private">${escapeHtml(privateRow.content||'')}</div>`:''}`;
+    div.className='pick-comment'+(depth?' pick-comment-reply':'');
+    div.dataset.commentId=r.id;
+    if(depth)div.style.marginLeft=Math.min(depth,2)*18+'px';
+    const actions=[];
+    if(user)actions.push(`<button type="button" class="pick-comment-action pick-reply-btn" data-comment-id="${r.id}">답글</button>`);
+    if(canSee)actions.push(`<button type="button" class="pick-comment-action pick-edit-btn" data-comment-id="${r.id}">수정</button><button type="button" class="pick-comment-action pick-delete-btn" data-comment-id="${r.id}">삭제</button>`);
+    div.innerHTML=`<div class="comment-head"><div class="comment-author">${escapeHtml(r.nickname||'익명')}님의 답글입니다</div><div class="pick-comment-actions">${actions.join('')}</div></div>${canSee?`<div class="comment-private">${escapeHtml(privateRow.content||'')}</div>`:''}`;
     box.appendChild(div);
-  });
+    (children.get(r.id)||[]).forEach(child=>appendRow(child,depth+1));
+  };
+  (children.get(0)||[]).forEach(r=>appendRow(r,0));
+  publicRows.filter(r=>r.parent_id && !publicRows.some(x=>x.id===r.parent_id)).forEach(r=>appendRow(r,0));
+}
+
+function showInlineCommentForm(parentId=null, editId=null){
+  const existing=document.querySelector('.pick-inline-form');
+  if(existing)existing.remove();
+  const target=editId?document.querySelector(`.pick-comment[data-comment-id="${editId}"]`):document.querySelector(`.pick-comment[data-comment-id="${parentId}"]`);
+  if(!target)return;
+  const privateRow=editId?pickPrivateComments.find(x=>x.id===Number(editId)):null;
+  const form=document.createElement('div');form.className='pick-inline-form';
+  form.innerHTML=`<textarea maxlength="500" placeholder="${editId?'댓글 수정':'답글 남기기'}">${editId?escapeHtml(privateRow?.content||''):''}</textarea><div><button type="button" class="pick-inline-cancel">취소</button><button type="button" class="pick-inline-submit">${editId?'저장':'등록'}</button></div>`;
+  target.appendChild(form);
+  const ta=form.querySelector('textarea');ta.focus();
+  form.querySelector('.pick-inline-cancel').onclick=()=>form.remove();
+  form.querySelector('.pick-inline-submit').onclick=async()=>{
+    const content=ta.value.trim();
+    if(!content)return alert('댓글 내용을 입력해주세요.');
+    const btn=form.querySelector('.pick-inline-submit');btn.disabled=true;
+    if(editId) await updatePickComment(Number(editId),content,btn);
+    else await submitPickReply(Number(parentId),content,btn);
+  };
+}
+
+async function submitPickReply(parentId,content,btn){
+  if(!user||!profile){btn.disabled=false;return alert('답글을 남기려면 로그인과 프로필 닉네임이 필요해요.');}
+  const {error}=await sb.from('pick_comments').insert({pick_id:currentPick().id,user_id:user.id,content,parent_id:parentId});
+  btn.disabled=false;
+  if(error)return alert('답글 등록에 실패했어요: '+error.message);
+  await loadPickComments();
+}
+
+async function updatePickComment(id,content,btn){
+  if(!user)return;
+  let q=sb.from('pick_comments').update({content}).eq('id',id);
+  if(!profile?.is_master)q=q.eq('user_id',user.id);
+  const {error}=await q;
+  btn.disabled=false;
+  if(error)return alert('댓글 수정에 실패했어요: '+error.message);
+  await loadPickComments();
+}
+
+async function deletePickComment(id){
+  if(!user)return;
+  const row=pickPrivateComments.find(x=>x.id===id);
+  const allowed=!!row&&(row.user_id===user.id||profile?.is_master);
+  if(!allowed)return alert('삭제 권한이 없어요.');
+  if(!confirm('이 댓글을 삭제할까요?'))return;
+  let q=sb.from('pick_comments').delete().eq('id',id);
+  if(!profile?.is_master)q=q.eq('user_id',user.id);
+  const {error}=await q;
+  if(error)return alert('댓글 삭제에 실패했어요: '+error.message);
+  await loadPickComments();
 }
 
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
@@ -169,12 +236,12 @@ async function loadPickComments(){
     pickPublicComments=[];pickPrivateComments=[];renderPickComments();return;
   }
   const pid=currentPick().id;
-  const {data:pub,error:pubErr}=await sb.from('pick_comment_public').select('id,pick_id,nickname,created_at').eq('pick_id',pid).order('created_at',{ascending:true});
+  const {data:pub,error:pubErr}=await sb.from('pick_comment_public').select('id,pick_id,nickname,parent_id,created_at').eq('pick_id',pid).order('created_at',{ascending:true});
   if(pubErr){console.error('pick public comments error',pubErr);pickPublicComments=[];}
   else pickPublicComments=pub||[];
   pickPrivateComments=[];
   if(user){
-    let q=sb.from('pick_comments').select('id,pick_id,user_id,content,created_at').eq('pick_id',pid).order('created_at',{ascending:true});
+    let q=sb.from('pick_comments').select('id,pick_id,user_id,content,parent_id,created_at').eq('pick_id',pid).order('created_at',{ascending:true});
     if(!profile?.is_master)q=q.eq('user_id',user.id);
     const {data:priv,error}=await q;
     if(!error)pickPrivateComments=priv||[];
@@ -220,6 +287,25 @@ document.querySelector('#pickDots')?.addEventListener('click',e=>{
   pickIndex=Number(b.dataset.pickIndex)||0;renderPick();
 });
 document.querySelector('#pickCommentSubmit')?.addEventListener('click',submitPickComment);
+document.querySelector('#pickComments')?.addEventListener('click',e=>{
+  const b=e.target.closest('button[data-comment-id]');if(!b)return;
+  const id=Number(b.dataset.commentId);
+  if(b.classList.contains('pick-reply-btn'))showInlineCommentForm(id,null);
+  else if(b.classList.contains('pick-edit-btn'))showInlineCommentForm(null,id);
+  else if(b.classList.contains('pick-delete-btn'))deletePickComment(id);
+});
+
+function moveCharacter(delta){
+  if(!current)return;
+  const idx=C.findIndex(c=>c.id===current.id);
+  const next=C[(idx+delta+C.length)%C.length];
+  const total=Math.ceil(C.length/per);
+  page=Math.ceil(next.id/per);
+  render();
+  requestAnimationFrame(()=>openPreview(next.id));
+}
+document.querySelector('#characterPrev')?.addEventListener('click',()=>moveCharacter(-1));
+document.querySelector('#characterNext')?.addEventListener('click',()=>moveCharacter(1));
 
 function show(id){
   closePreview();

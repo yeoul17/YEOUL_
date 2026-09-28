@@ -245,7 +245,7 @@ html, body { overflow-x:hidden !important; }
 <div class="pick-card">
   <div class="pick-photo-side">
     <button id="pickPrev" class="pick-arrow" aria-label="이전 Pick">←</button>
-    <div class="pick-photo-wrap"><img id="pickPhoto" class="pick-photo" src="images/pick-01.jpg" alt="여울's Pick"></div>
+    <div class="pick-photo-wrap"><img id="pickPhoto" class="pick-photo" src="images/pick-01.jpg" alt="여울's Pick"><span id="pickNewBadge" class="pick-new-badge" hidden>NEW</span></div>
     <button id="pickNext" class="pick-arrow" aria-label="다음 Pick">→</button>
   </div>
   <div class="pick-info">
@@ -262,7 +262,7 @@ html, body { overflow-x:hidden !important; }
 </div>
 <div id="pickDots" class="pick-dots"></div>
 </section></main>
-<section id="preview" class="preview"><button id="previewClose" class="preview-close" aria-label="닫기">×</button><div class="preview-inner"><div class="preview-image" id="previewImage">IMAGE</div><div class="preview-copy"><div class="preview-label">CHARACTER</div><h2 id="previewName"></h2><p id="previewDesc"></p></div></div></section>
+<section id="preview" class="preview"><button id="previewClose" class="preview-close" aria-label="닫기">×</button><div class="preview-inner"><div class="preview-image" id="previewImage">IMAGE</div><div class="preview-copy"><div class="preview-label">CHARACTER</div><h2 id="previewName"></h2><div class="character-switch"><button id="characterPrev" type="button">〈 이전</button><button id="characterNext" type="button">다음 〉</button></div><p id="previewDesc"></p></div></div></section>
 <div id="profileModal" class="profile-modal" aria-hidden="true">
   <div class="profile-backdrop"></div>
   <div class="profile-box" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
@@ -416,4 +416,4 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js?v=98"></script></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="script.js?v=123"></script></body></html>

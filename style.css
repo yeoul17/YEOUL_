@@ -2685,3 +2685,44 @@ body:has(#characters.active){
   #pick .pick-comments-area{min-height:220px;padding-top:12px;}
   #pick .pick-comments{max-height:180px;}
 }
+
+/* v123: Pick NEW 표시 / 댓글 관리 / 캐릭터 이전·다음 */
+#pick .pick-photo-wrap{position:relative;}
+#pick .pick-new-badge{
+  position:absolute;top:12px;left:12px;z-index:3;
+  padding:5px 9px;border-radius:999px;
+  background:rgba(255,255,255,.92);color:#b77c94;
+  border:1px solid rgba(184,164,196,.28);
+  box-shadow:0 3px 10px rgba(120,100,130,.10);
+  font-size:9px;font-weight:700;letter-spacing:1.5px;
+}
+#pick .comment-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+#pick .pick-comment-actions{display:flex;gap:3px;flex-shrink:0;}
+#pick .pick-comment-action{
+  border:0;background:transparent;color:#aaa0a8;cursor:pointer;
+  padding:2px 4px;font:inherit;font-size:10px;
+}
+#pick .pick-comment-action:hover{color:#806f7a;}
+#pick .pick-comment-reply{background:rgba(241,237,245,.72);}
+#pick .pick-inline-form{margin-top:8px;display:flex;flex-direction:column;gap:6px;}
+#pick .pick-inline-form textarea{
+  width:100%;min-height:52px;resize:vertical;box-sizing:border-box;
+  border:1px solid rgba(184,164,196,.3);border-radius:9px;padding:8px 9px;
+  font:inherit;font-size:11px;background:#fff;color:#665e67;
+}
+#pick .pick-inline-form>div{display:flex;justify-content:flex-end;gap:5px;}
+#pick .pick-inline-form button{
+  border:1px solid rgba(184,164,196,.25);border-radius:8px;padding:5px 9px;
+  background:#fff;color:#776b74;cursor:pointer;font:inherit;font-size:10px;
+}
+#pick .pick-inline-form .pick-inline-submit{background:#eee5f1;}
+.character-switch{display:flex;gap:8px;margin:0 0 16px;}
+.character-switch button{
+  border:1px solid #ead9e1;background:#fff7fa;color:#8d7883;
+  border-radius:18px;padding:7px 12px;font:inherit;font-size:11px;cursor:pointer;
+}
+.character-switch button:hover{background:#f8e8ee;}
+@media(max-width:650px){
+  #pick .pick-new-badge{top:9px;left:9px;font-size:8px;padding:4px 8px;}
+  .character-switch{justify-content:center;margin-bottom:12px;}
+}
