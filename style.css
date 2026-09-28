@@ -2726,3 +2726,11 @@ body:has(#characters.active){
   #pick .pick-new-badge{top:9px;left:9px;font-size:8px;padding:4px 8px;}
   .character-switch{justify-content:center;margin-bottom:12px;}
 }
+
+/* 캐릭터 이름 한글 받침이 또렷하게 보이도록 기본 고딕 폰트 적용 */
+#grid .card h3,
+#detail .copy h2 {
+  font-family:"Malgun Gothic","Noto Sans KR",Arial,sans-serif !important;
+  font-weight:700;
+  font-variant-ligatures:none;
+}
