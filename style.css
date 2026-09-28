@@ -2737,3 +2737,55 @@ body:has(#characters.active){
 
 /* v125: character name glyph fix */
 .card h3, .preview-copy h2, .copy h2 { font-family:"Malgun Gothic","Noto Sans KR",Arial,sans-serif !important; font-weight:600 !important; }
+
+/* v126: 캐릭터 이전/다음 버튼이 설명 영역 높이에 영향을 주지 않도록 고정 */
+.preview .preview-inner{
+  align-items:start !important;
+  position:fixed !important;
+}
+.preview .preview-image{
+  height:400px !important;
+  align-self:start !important;
+}
+.preview .preview-copy{
+  height:400px !important;
+  box-sizing:border-box !important;
+  align-self:start !important;
+  display:flex !important;
+  flex-direction:column !important;
+  padding-bottom:0 !important;
+}
+.preview .preview-copy h2{
+  flex:0 0 auto !important;
+}
+.preview .preview-copy .character-switch{
+  position:absolute !important;
+  left:50% !important;
+  bottom:14px !important;
+  transform:translateX(-50%) !important;
+  z-index:6 !important;
+  margin:0 !important;
+}
+.preview .preview-copy p#previewDesc{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  overflow:auto !important;
+}
+@media(max-width:900px){
+  .preview .preview-inner{align-items:start !important;}
+  .preview .preview-image{height:340px !important;}
+  .preview .preview-copy{height:340px !important;}
+}
+@media(max-width:600px){
+  .preview .preview-inner{align-items:stretch !important;}
+  .preview .preview-image{height:280px !important;}
+  .preview .preview-copy{height:auto !important;}
+  .preview .preview-copy .character-switch{
+    position:static !important;
+    transform:none !important;
+    justify-content:center !important;
+    margin:12px 0 !important;
+  }
+  .preview .preview-copy p#previewDesc{max-height:none !important;}
+}
