@@ -2904,3 +2904,41 @@ body:has(#characters.active){
     object-position:center center !important;
   }
 }
+
+/* v129: 모바일 캐릭터 사진은 원본 비율 그대로 표시하여 상하단 절대 잘리지 않게 수정 */
+@media (max-width:650px){
+  .preview{
+    align-items:flex-start !important;
+    justify-content:center !important;
+    padding:12px 10px 24px !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+  }
+  .preview .preview-inner{
+    width:min(560px,100%) !important;
+    margin:0 auto !important;
+    padding:52px 14px 22px !important;
+    height:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+    display:block !important;
+  }
+  .preview .preview-image{
+    width:100% !important;
+    height:auto !important;
+    aspect-ratio:auto !important;
+    min-height:0 !important;
+    overflow:visible !important;
+    display:block !important;
+    background:#fff9 !important;
+  }
+  .preview .preview-image img{
+    display:block !important;
+    width:100% !important;
+    height:auto !important;
+    max-width:100% !important;
+    max-height:none !important;
+    object-fit:initial !important;
+    object-position:initial !important;
+  }
+}
