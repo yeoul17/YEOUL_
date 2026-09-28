@@ -2889,3 +2889,18 @@ body:has(#characters.active){
   }
   .preview{overflow-y:auto !important;}
 }
+
+/* v128: 모바일 캐릭터 팝업 사진 상단 잘림 방지 */
+@media(max-width:600px){
+  .preview .preview-image{
+    height:auto !important;
+    aspect-ratio:3 / 4 !important;
+    overflow:hidden !important;
+  }
+  .preview .preview-image img{
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+  }
+}
