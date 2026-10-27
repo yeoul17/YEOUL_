@@ -587,3 +587,60 @@ document.addEventListener('click',(e)=>{
   const t=document.querySelector('.home-chest-title');
   if(t) t.classList.remove('home-title-moving');
 });
+
+
+/* v131 master-only account list */
+async function loadMasterUsers(){
+  const grid=document.querySelector('#masterUsersGrid');
+  const status=document.querySelector('#masterUsersStatus');
+  const total=document.querySelector('#masterUsersTotal');
+  if(!grid||!status||!total)return;
+  if(!user||!profile?.is_master||!sb){
+    grid.innerHTML='';total.textContent='';status.textContent='마스터 계정만 볼 수 있어요.';return;
+  }
+  status.textContent='가입자 목록을 불러오는 중...';
+  grid.innerHTML='';
+  const {data,error}=await sb.rpc('get_master_users');
+  if(error){
+    status.textContent='가입자 목록을 불러오지 못했어요. 아래 SQL 파일을 Supabase SQL Editor에서 먼저 실행했는지 확인해주세요.';
+    total.textContent='';
+    const note=document.createElement('p');
+    note.className='master-users-error';
+    note.textContent=error.message||'알 수 없는 오류';
+    grid.appendChild(note);
+    return;
+  }
+  const rows=data||[];
+  total.textContent=`전체 ${rows.length}명`;
+  if(!rows.length){status.textContent='가입자가 없거나 표시할 계정이 없습니다.';return;}
+  rows.forEach(row=>{
+    const card=document.createElement('article');card.className='master-user-card';
+    const avatar=document.createElement(row.avatar_url?'img':'span');
+    avatar.className='master-user-avatar';
+    if(row.avatar_url){avatar.src=row.avatar_url;avatar.alt='';}
+    else {avatar.textContent='♡';}
+    const info=document.createElement('div');info.className='master-user-info';
+    const nickname=document.createElement('strong');nickname.textContent=row.nickname||'프로필 미작성 사용자';
+    const email=document.createElement('span');email.className='master-user-email';email.textContent=row.email||'이메일 정보 없음';
+    const created=document.createElement('small');
+    created.textContent='가입: '+(row.created_at?new Date(row.created_at).toLocaleString('ko-KR',{dateStyle:'medium',timeStyle:'short'}):'정보 없음');
+    const last=document.createElement('small');
+    last.textContent='최근 로그인: '+(row.last_sign_in_at?new Date(row.last_sign_in_at).toLocaleString('ko-KR',{dateStyle:'medium',timeStyle:'short'}):'로그인 기록 없음');
+    info.append(nickname,email,created,last);card.append(avatar,info);grid.appendChild(card);
+  });
+  status.textContent='마스터 계정에서만 확인할 수 있는 가입자 목록입니다.';
+}
+function setMasterPanel(panel){
+  const likesPanel=document.querySelector('#masterLikesPanel');
+  const usersPanel=document.querySelector('#masterUsersPanel');
+  const likesTab=document.querySelector('#masterLikesTab');
+  const usersTab=document.querySelector('#masterUsersTab');
+  if(!likesPanel||!usersPanel||!likesTab||!usersTab)return;
+  const users=panel==='users';
+  likesPanel.hidden=users;usersPanel.hidden=!users;
+  likesTab.classList.toggle('active',!users);usersTab.classList.toggle('active',users);
+  if(users)loadMasterUsers();
+}
+document.querySelector('#masterLikesTab')?.addEventListener('click',()=>setMasterPanel('likes'));
+document.querySelector('#masterUsersTab')?.addEventListener('click',()=>setMasterPanel('users'));
+document.querySelector('#masterUsersRefresh')?.addEventListener('click',loadMasterUsers);
